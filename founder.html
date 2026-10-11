@@ -117,6 +117,8 @@ function healthBanner() {
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 function maskId(d) { return d && d.length >= 4 ? '•••• ' + d.slice(-4) : (d || ''); }
+function typeLabel(ty) { return ty === 'delivery' ? 'Delivery' : ty === 'service' ? 'Service' : ty === 'visitor' ? 'Visitor' : esc(ty); }
+function whereOf(e) { const base = (esc(e.section || '') + (e.villa ? '-' + esc(e.villa) : '')).trim(); const loc = e.cluster ? esc(e.cluster) + (base ? ' ' + base : '') : base; return e.type === 'delivery' ? [esc(e.company || ''), loc].filter(Boolean).join(' → ') : [loc, esc(e.company || '')].filter(Boolean).join(' · '); }
 function parseSearchDate(q) {
   if (!q || !q.trim()) return null;
   const s = q.trim();
@@ -239,7 +241,7 @@ const VIEWS = {
     const searchD = parseSearchDate(S.searchdate);
     const shownReal = searchD ? real.filter(e => sameDay(e.ts, searchD)) : real.slice().sort((a, b) => b.ts - a.ts).slice(0, 30);
     const sortedReal = searchD ? shownReal.slice().sort((a, b) => b.ts - a.ts) : shownReal;
-    const rowHtml = e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${e.type}</td><td>${esc(e.company || '')} ${esc(e.section || '')}${e.villa ? '-' + esc(e.villa) : ''}</td><td>${e.anonymized ? '<i>erased</i>' : (esc(e.name_en) || '–')}</td><td>${e.anonymized ? '<i>erased</i>' : (maskId(e.idn) || '–')}</td><td>${(e.carColor || e.plate) ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td><td><button class="btn" style="min-height:36px;padding:4px 12px;font-size:13px" data-act="deleteentry" data-arg="${esc(e.id)}">Delete</button></td></tr>`;
+    const rowHtml = e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${typeLabel(e.type)}</td><td>${whereOf(e)}</td><td>${e.anonymized ? '<i>erased</i>' : (esc(e.name_en) || '–')}</td><td>${e.anonymized ? '<i>erased</i>' : (maskId(e.idn) || '–')}</td><td>${e.anonymized ? '<i>erased</i>' : (esc(e.phone) || '–')}</td><td>${(e.carColor || e.plate) ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td><td><button class="btn" style="min-height:36px;padding:4px 12px;font-size:13px" data-act="deleteentry" data-arg="${esc(e.id)}">Delete</button></td></tr>`;
     return `<div class="wrap">
       <header class="top"><span class="brand disp">${esc(g.community)}<span>${g.plan === 'premium' ? 'Premium' : 'Basic'}</span></span>
         <div class="topbtns">${themeBtn()}<button class="btn" data-act="backlist">All gates</button></div></header>
@@ -259,8 +261,8 @@ const VIEWS = {
         <button class="btn primary" data-act="gencode">Generate pairing code</button></div>
 
       ${isDemo ? `<div class="panel" style="border-color:var(--gold)"><h3>Demo entries (${d.entries.filter(e => e.demo).length}) — not real, only visible to you</h3>
-        <table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th>Vehicle</th></tr></thead><tbody>
-          ${d.entries.filter(e => e.demo).sort((a, b) => b.ts - a.ts).slice(0, 30).map(e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${e.type}</td><td>${esc(e.company || '')} ${esc(e.section || '')}${e.villa ? '-' + esc(e.villa) : ''}</td><td>${esc(e.name_en) || '–'}</td><td>${maskId(e.idn) || '–'}</td><td>${(e.carColor || e.plate) ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td></tr>`).join('')}
+        <table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th>Phone</th><th>Vehicle</th></tr></thead><tbody>
+          ${d.entries.filter(e => e.demo).sort((a, b) => b.ts - a.ts).slice(0, 30).map(e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${typeLabel(e.type)}</td><td>${whereOf(e)}</td><td>${esc(e.name_en) || '–'}</td><td>${maskId(e.idn) || '–'}</td><td>${esc(e.phone) || '–'}</td><td>${(e.carColor || e.plate) ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td></tr>`).join('')}
         </tbody></table>
       </div>` : ''}
 
@@ -273,14 +275,14 @@ const VIEWS = {
         </div>
         ${searchD ? `<p class="small" style="margin:0 0 14px">Showing ${sortedReal.length} ${sortedReal.length === 1 ? 'entry' : 'entries'} for ${searchD.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' })}.</p>` : ''}
         ${S.searchdate && !searchD ? `<p class="warn" style="margin:0 0 14px">Couldn't understand that date. Try something like "Sep 17" or "2026-09-17".</p>` : ''}
-        ${sortedReal.length ? `<table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th>Vehicle</th><th></th></tr></thead><tbody>
+        ${sortedReal.length ? `<table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th>Phone</th><th>Vehicle</th><th></th></tr></thead><tbody>
           ${sortedReal.map(rowHtml).join('')}
         </tbody></table>` : `<p class="small">${searchD ? 'No entries found for that date.' : 'Nothing real recorded yet at this gate.'}</p>`}
       </div>
 
       ${trashed.length ? `<div class="panel"><h3>Deleted (${trashed.length}) — still in the database, restore anytime</h3>
-        <table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th></th></tr></thead><tbody>
-          ${trashed.slice().sort((a, b) => b.deletedAt - a.deletedAt).map(e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${e.type}</td><td>${esc(e.company || '')} ${esc(e.section || '')}${e.villa ? '-' + esc(e.villa) : ''}</td><td>${esc(e.name_en) || '–'}</td><td>${maskId(e.idn) || '–'}</td><td><button class="btn" style="min-height:36px;padding:4px 12px;font-size:13px" data-act="restoreentry" data-arg="${esc(e.id)}">Restore</button></td></tr>`).join('')}
+        <table><thead><tr><th>Time</th><th>Type</th><th>Where</th><th>Name</th><th>ID</th><th>Phone</th><th></th></tr></thead><tbody>
+          ${trashed.slice().sort((a, b) => b.deletedAt - a.deletedAt).map(e => `<tr><td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td><td>${typeLabel(e.type)}</td><td>${whereOf(e)}</td><td>${esc(e.name_en) || '–'}</td><td>${maskId(e.idn) || '–'}</td><td>${esc(e.phone) || '–'}</td><td><button class="btn" style="min-height:36px;padding:4px 12px;font-size:13px" data-act="restoreentry" data-arg="${esc(e.id)}">Restore</button></td></tr>`).join('')}
         </tbody></table>
       </div>` : ''}
 
@@ -338,7 +340,7 @@ async function openGate(gateId) {
     sb.from('entries').select('*').eq('gate_id', gateId).order('ts', { ascending: false }).limit(500)
   ]);
   if (ge || ee) { alert('Could not load this gate: ' + ((ge && ge.message) || (ee && ee.message))); S.screen = 'list'; render(); return; }
-  S.detail = { gate, entries: (entries || []).map(r => ({ id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, section: r.section, villa: r.villa, name_en: r.name_en, idn: r.id_number || '', carColor: r.car_color || '', plate: r.plate_number || '', anonymized: r.anonymized, demo: r.demo, deletedAt: r.deleted_at ? new Date(r.deleted_at).getTime() : null })) };
+  S.detail = { gate, entries: (entries || []).map(r => ({ id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, cluster: r.cluster || '', section: r.section, villa: r.villa, name_en: r.name_en, idn: r.id_number || '', phone: r.phone || '', carColor: r.car_color || '', plate: r.plate_number || '', anonymized: r.anonymized, demo: r.demo, deletedAt: r.deleted_at ? new Date(r.deleted_at).getTime() : null })) };
   S.renamevalue = gate.community;
   S.screen = 'detail'; render();
 }
@@ -415,10 +417,13 @@ async function toggleDemo() {
     const first = ['Ahmed','Omar','Sara','Khalid','Fatima','Yusuf','Layla','Hassan','Noor','Ali'];
     const last = ['Al Mansoori','Khan','Hussain','Al Nuaimi','Ahmed','Rahman','Ali','Al Suwaidi','Sharma','Ibrahim'];
     const colors = ['White','Black','Silver','Grey','Red','Blue'];
+    const services = ['Maintenance','Cleaning','Contractor','Plumber','Electrician','AC technician','Pest control','Taxi / Ride','Real estate / Viewing'];
     const pick = a => a[Math.floor(Math.random() * a.length)];
     const cos = (S.detail.gate.companies || ['Talabat', 'Noon']).filter(c => c !== 'Other');
     const secs = S.detail.gate.sections && S.detail.gate.sections.length ? S.detail.gate.sections : [''];
+    const clusters = S.detail.gate.clusters && S.detail.gate.clusters.length ? S.detail.gate.clusters : [''];
     const plate = () => (1000 + Math.floor(Math.random() * 90000)) + ' · ' + String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    const phone = () => '05' + Math.floor(Math.random() * 10) + ' ' + (100 + Math.floor(Math.random() * 900)) + ' ' + (1000 + Math.floor(Math.random() * 9000));
     const rows = [];
     for (let d = 6; d >= 0; d--) {
       const day = new Date(); day.setHours(0, 0, 0, 0); day.setDate(day.getDate() - d);
@@ -427,10 +432,12 @@ async function toggleDemo() {
         rows.push({ gate_id: gid, type: 'delivery', company: pick(cos), section: '', villa: '',
           name_en: noId ? '' : (pick(first) + ' ' + pick(last)).toUpperCase(),
           id_number: noId ? '' : '784' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join(''),
+          phone: noId ? '' : phone(),
           car_color: noId ? pick(colors) : '', plate_number: noId ? plate() : '',
           ts: new Date(day.getTime() + Math.random() * 12 * 3600e3 + 8 * 3600e3).toISOString(), demo: true });
       }
-      for (let i = 0; i < 9; i++) rows.push({ gate_id: gid, type: 'visitor', company: '', section: pick(secs), villa: String(1 + Math.floor(Math.random() * 40)), name_en: (pick(first) + ' ' + pick(last)).toUpperCase(), id_number: '784' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join(''), car_color: '', plate_number: '', ts: new Date(day.getTime() + Math.random() * 12 * 3600e3 + 8 * 3600e3).toISOString(), demo: true });
+      for (let i = 0; i < 9; i++) rows.push({ gate_id: gid, type: 'visitor', company: '', cluster: pick(clusters), section: pick(secs), villa: String(1 + Math.floor(Math.random() * 40)), name_en: (pick(first) + ' ' + pick(last)).toUpperCase(), id_number: '784' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join(''), phone: phone(), car_color: '', plate_number: '', ts: new Date(day.getTime() + Math.random() * 12 * 3600e3 + 8 * 3600e3).toISOString(), demo: true });
+      for (let i = 0; i < 5; i++) rows.push({ gate_id: gid, type: 'service', company: pick(services), cluster: pick(clusters), section: pick(secs), villa: String(1 + Math.floor(Math.random() * 40)), name_en: (pick(first) + ' ' + pick(last)).toUpperCase(), id_number: '784' + Array.from({ length: 12 }, () => Math.floor(Math.random() * 10)).join(''), phone: phone(), car_color: '', plate_number: '', ts: new Date(day.getTime() + Math.random() * 12 * 3600e3 + 8 * 3600e3).toISOString(), demo: true });
     }
     const { error } = await sb.from('entries').insert(rows);
     if (error) { S.saving = false; alert('Could not turn on demo data: ' + error.message); render(); return; }
@@ -438,7 +445,7 @@ async function toggleDemo() {
   const { data: entries, error: le } = await sb.from('entries').select('*').eq('gate_id', gid).order('ts', { ascending: false }).limit(500);
   S.saving = false;
   if (le) { alert('Demo data changed, but reloading the list failed: ' + le.message); render(); return; }
-  S.detail.entries = (entries || []).map(r => ({ id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, section: r.section, villa: r.villa, name_en: r.name_en, idn: r.id_number || '', carColor: r.car_color || '', plate: r.plate_number || '', anonymized: r.anonymized, demo: r.demo, deletedAt: r.deleted_at ? new Date(r.deleted_at).getTime() : null }));
+  S.detail.entries = (entries || []).map(r => ({ id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, cluster: r.cluster || '', section: r.section, villa: r.villa, name_en: r.name_en, idn: r.id_number || '', phone: r.phone || '', carColor: r.car_color || '', plate: r.plate_number || '', anonymized: r.anonymized, demo: r.demo, deletedAt: r.deleted_at ? new Date(r.deleted_at).getTime() : null }));
   render();
 }
 
