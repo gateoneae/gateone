@@ -363,7 +363,71 @@ const STR = {
   id_diff: { en: 'The ID number is different from an earlier scan.', ar: 'رقم الهوية مختلف عن مسح سابق.' },
   out_photo_confirm: { en: 'Are you sure? Marking this visitor as left also permanently deletes their vehicle photo.', ar: 'هل أنت متأكد؟ تسجيل خروج هذا الزائر يحذف صورة سيارته نهائيًا.' },
   pair_wrong: { en: 'That code is wrong or has expired.', ar: 'الرمز خاطئ أو منتهي الصلاحية.' },
-  color_ph: { en: 'e.g. White', ar: 'مثال: أبيض' }
+  color_ph: { en: 'e.g. White', ar: 'مثال: أبيض' },
+  dash_suffix: { en: 'dashboard', ar: 'لوحة التحكم' },
+  back_to_gate: { en: 'Back to gate', ar: 'رجوع إلى البوابة' },
+  live_sync: { en: 'Live — synced across every tablet at this gate.', ar: 'مباشر — متزامن مع كل الأجهزة في هذه البوابة.' },
+  range_today: { en: 'Today', ar: 'اليوم' },
+  range_7: { en: '7 days', ar: '7 أيام' },
+  range_30: { en: '30 days', ar: '30 يومًا' },
+  per_day: { en: '/day', ar: '/يوم' },
+  refused_suffix: { en: 'refused', ar: 'مرفوض' },
+  busiest_hour: { en: 'Busiest hour', ar: 'أكثر ساعة ازدحامًا' },
+  top_delivery_company: { en: 'Top delivery company', ar: 'أعلى شركة توصيل' },
+  inside_now: { en: 'Inside right now:', ar: 'بالداخل الآن:' },
+  over_time_limit: { en: 'over the time limit', ar: 'تجاوزوا الحد الزمني' },
+  avg_visitor_stay: { en: 'Average visitor stay:', ar: 'متوسط مدة بقاء الزائر:' },
+  traffic_by_hour: { en: 'Traffic by hour', ar: 'الحركة حسب الساعة' },
+  no_entries_period: { en: 'No entries in this period yet.', ar: 'لا توجد سجلات في هذه الفترة بعد.' },
+  deliveries_by_company: { en: 'Deliveries by company', ar: 'التوصيل حسب الشركة' },
+  no_deliveries_period: { en: 'No deliveries in this period yet.', ar: 'لا توجد عمليات توصيل في هذه الفترة بعد.' },
+  latest_entries: { en: 'Latest entries', ar: 'آخر السجلات' },
+  th_time: { en: 'Time', ar: 'الوقت' },
+  th_type: { en: 'Type', ar: 'النوع' },
+  th_company_villa: { en: 'Company / villa', ar: 'الشركة / الفيلا' },
+  th_name: { en: 'Name', ar: 'الاسم' },
+  th_id: { en: 'ID', ar: 'الهوية' },
+  th_left: { en: 'Left', ar: 'الخروج' },
+  th_resident: { en: 'Resident', ar: 'الساكن' },
+  erased_after: { en: 'Erased after {n} days', ar: 'تم الحذف بعد {n} يومًا' },
+  left_inside: { en: 'Inside', ar: 'بالداخل' },
+  settings_title: { en: 'Settings', ar: 'الإعدادات' },
+  plan_label: { en: 'Plan', ar: 'الخطة' },
+  plan_basic: { en: 'Basic', ar: 'أساسية' },
+  plan_premium: { en: 'Premium', ar: 'مميزة' },
+  change_plan: { en: 'Change plan', ar: 'تغيير الخطة' },
+  community_label: { en: 'Community / gate name', ar: 'المجتمع / اسم البوابة' },
+  retention_label: { en: 'Erase names, IDs and phone numbers after (days)', ar: 'حذف الأسماء والهويات وأرقام الهاتف بعد (أيام)' },
+  companies_label: { en: 'Delivery companies (comma separated)', ar: 'شركات التوصيل (مفصولة بفواصل)' },
+  sections_label: { en: 'Villa sections / blocks (comma separated)', ar: 'أقسام / مجموعات الفلل (مفصولة بفواصل)' },
+  clusters_label: { en: 'Sub-communities (comma separated)', ar: 'المجتمعات الفرعية (مفصولة بفواصل)' },
+  pin_setting_label: { en: 'Manager PIN (4 digits)', ar: 'رمز المدير (4 أرقام)' },
+  track_exit_label: { en: 'Track when deliveries leave', ar: 'تتبع خروج التوصيل' },
+  track_exit_off: { en: 'Off — faster, deliveries won\'t show as "inside"', ar: 'إيقاف — أسرع، لن تظهر التوصيلات كـ"بالداخل"' },
+  track_exit_on: { en: 'On — guard taps Out for deliveries too', ar: 'تشغيل — يضغط الحارس خروج للتوصيل أيضًا' },
+  overstay_label: { en: 'Delivery time limit (minutes)', ar: 'الحد الزمني للتوصيل (دقائق)' },
+  approval_setting_label: { en: 'Ask the resident before visitors enter', ar: 'سؤال الساكن قبل دخول الزوار' },
+  assume_left_label: { en: 'Assume people left after (hours)', ar: 'افتراض أن الأشخاص غادروا بعد (ساعات)' },
+  directory_label: { en: 'Villa phone numbers (one per line: A-12, 0501234567)', ar: 'أرقام هواتف الفلل (سطر لكل رقم: A-12, 0501234567)' },
+  directory_note: { en: "These are residents' personal numbers. They stay until removed.", ar: 'هذه أرقام شخصية للسكان. تبقى محفوظة حتى تُحذف.' },
+  premium_note: { en: 'Premium adds returning drivers/visitors and resident approval.', ar: 'تضيف الخطة المميزة ميزة الزوار/السائقين المتكررين وموافقة الساكن.' },
+  export_csv: { en: 'Export CSV', ar: 'تصدير CSV' },
+  erase_now: { en: 'Erase old details now', ar: 'حذف البيانات القديمة الآن' },
+  no_entries_yet: { en: 'No entries recorded yet at this gate.', ar: 'لا توجد سجلات في هذه البوابة بعد.' },
+  off_label: { en: 'Off', ar: 'إيقاف' },
+  on_label: { en: 'On', ar: 'تشغيل' },
+  approved_label: { en: 'Approved', ar: 'تمت الموافقة' },
+  purge_confirm: { en: 'Are you sure? This permanently erases names, ID numbers and phone numbers for every entry older than the retention period. It cannot be undone.', ar: 'هل أنت متأكد؟ سيؤدي هذا إلى حذف الأسماء وأرقام الهوية والهاتف نهائيًا لكل سجل أقدم من فترة الاحتفاظ. لا يمكن التراجع عن ذلك.' },
+  purge_fail: { en: 'Could not run the erase job. Try again.', ar: 'تعذّر تشغيل مهمة الحذف. حاول مرة أخرى.' },
+  purge_done: { en: 'Old details erased where the retention period had passed.', ar: 'تم حذف البيانات القديمة التي تجاوزت فترة الاحتفاظ.' },
+  owner_code_prompt: { en: 'Gatesone owner code', ar: 'رمز مالك جيتسون' },
+  wrong_code: { en: 'Wrong code.', ar: 'رمز خاطئ.' },
+  plan_fail: { en: 'Could not update the plan.', ar: 'تعذّر تحديث الخطة.' },
+  pin_must_4: { en: 'The PIN must be exactly 4 digits.', ar: 'يجب أن يكون الرمز 4 أرقام فقط.' },
+  retention_longer_confirm: { en: 'Keeping names, ID numbers and phone numbers longer than 14 days means you are responsible for protecting them. Continue?', ar: 'الاحتفاظ بالأسماء وأرقام الهوية والهاتف لأكثر من 14 يومًا يعني أنك مسؤول عن حمايتها. هل تريد الاستمرار؟' },
+  retention_shorter_confirm: { en: 'Are you sure? Shortening the retention period means older names, ID numbers and phone numbers will be erased sooner, and that cannot be undone.', ar: 'هل أنت متأكد؟ تقليل فترة الاحتفاظ يعني حذف الأسماء وأرقام الهوية والهاتف الأقدم بشكل أسرع، ولا يمكن التراجع عن ذلك.' },
+  setting_fail: { en: 'Could not save that setting — check the connection.', ar: 'تعذّر حفظ هذا الإعداد — تحقق من الاتصال.' },
+  default_gate_name: { en: 'Main Gate', ar: 'البوابة الرئيسية' }
 };
 // Display names for stored values (the database keeps the English value).
 const VAL_AR = {
@@ -706,8 +770,8 @@ function fmtDur(ms) { const m = Math.max(1, Math.round(ms / 60000)); if (m < 60)
 function isInside(e) { if (e.outAt || e.approval === 'denied') return false; if (e.type === 'delivery' && !db.settings.trackDeliveryExit) return false; return Date.now() - e.ts < db.settings.assumeLeftHours * 3600e3; }
 function insideList() { return db.events.filter(isInside).sort((a, b) => a.ts - b.ts); }
 function overstay(e) { return e.type === 'delivery' && Date.now() - e.ts > db.settings.overstayMin * 60000; }
-function leftCell(e) { if (e.approval === 'denied') return 'Refused'; if (e.outAt) return new Date(e.outAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); return isInside(e) ? '<b>Inside</b>' : '–'; }
-function approvalLabel(e) { return ({ approved: 'Approved', denied: 'Refused', no_answer: 'No answer' })[e.approval] || '–'; }
+function leftCell(e) { if (e.approval === 'denied') return esc(t('refused')); if (e.outAt) return esc(fmtTime(e.outAt)); return isInside(e) ? '<b>' + esc(t('left_inside')) + '</b>' : '–'; }
+function approvalLabel(e) { return esc(({ approved: t('approved_label'), denied: t('refused'), no_answer: t('no_answer') })[e.approval] || '–'); }
 function fmtId(d) { d = String(d || ''); return /^\d{15}$/.test(d) ? `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7,14)}-${d.slice(14)}` : d; }
 function maskId(d) { return d && d.length >= 4 ? '•••• ' + d.slice(-4) : ''; }
 const hlab = x => { x = ((x % 24) + 24) % 24; return (x % 12 || 12) + (x < 12 ? ' am' : ' pm'); };
@@ -1043,19 +1107,19 @@ async function doOut(id) {
   }
 }
 async function doPurge() {
-  if (!confirm('Are you sure? This permanently erases names, ID numbers and phone numbers for every entry older than the retention period. It cannot be undone.')) return;
+  if (!confirm(t('purge_confirm'))) return;
   const { error } = await sb.rpc('purge_expired_entries');
-  if (error) { alert('Could not run the erase job. Try again.'); return; }
+  if (error) { alert(t('purge_fail')); return; }
   await loadGate(); render();
-  alert('Old details erased where the retention period had passed.');
+  alert(t('purge_done'));
 }
 async function doPlanToggle() {
-  const code = prompt('Gatesone owner code'); if (code === null) return;
-  if (code !== 'gateone-2026') { alert('Wrong code.'); return; }
+  const code = prompt(t('owner_code_prompt')); if (code === null) return;
+  if (code !== 'gateone-2026') { alert(t('wrong_code')); return; }
   const next = isPremium() ? 'basic' : 'premium';
   const patch = { plan: next }; if (next === 'basic') patch.approval_enabled = false;
   const { error } = await sb.from('gates').update(patch).eq('id', GATE_ID);
-  if (error) { alert('Could not update the plan.'); return; }
+  if (error) { alert(t('plan_fail')); return; }
   db.settings.plan = next; if (next === 'basic') db.settings.approval = false;
   render();
 }
@@ -1064,20 +1128,20 @@ async function setSetting(k, v) {
   let val = v;
   if (k === 'retention') {
     const n = Math.min(365, Math.max(1, Math.round(+v) || 14));
-    if (n > 14 && n > s.retention && !confirm('Keeping names, ID numbers and phone numbers longer than 14 days means you are responsible for protecting them. Continue?')) { render(); return; }
-    if (n < s.retention && !confirm('Are you sure? Shortening the retention period means older names, ID numbers and phone numbers will be erased sooner, and that cannot be undone.')) { render(); return; }
+    if (n > 14 && n > s.retention && !confirm(t('retention_longer_confirm'))) { render(); return; }
+    if (n < s.retention && !confirm(t('retention_shorter_confirm'))) { render(); return; }
     val = n;
-  } else if (k === 'pin') { if (!/^\d{4}$/.test(v)) { alert('The PIN must be exactly 4 digits.'); return; } }
+  } else if (k === 'pin') { if (!/^\d{4}$/.test(v)) { alert(t('pin_must_4')); return; } }
   else if (k === 'companies' || k === 'sections' || k === 'clusters') { val = v.split(',').map(x => x.trim()).filter(Boolean); }
   else if (k === 'trackDeliveryExit') { val = v === 'on'; }
   else if (k === 'approval') { val = isPremium() && v === 'on'; }
   else if (k === 'overstayMin') { val = Math.max(5, +v || 60); }
   else if (k === 'assumeLeftHours') { val = Math.max(1, +v || 12); }
   else if (k === 'directory') { const m = {}; v.split('\n').forEach(l => { const p = l.split(/[,\t]/); if (p.length < 2) return; const key = p[0].trim().toUpperCase().replace(/\s+/g, ''), ph = p.slice(1).join('').trim(); if (key && ph) m[key] = ph; }); val = m; }
-  else if (k === 'community') { val = v.trim() || 'Main Gate'; }
+  else if (k === 'community') { val = v.trim() || t('default_gate_name'); }
   const patch = {}; patch[col] = val;
   const { error } = await sb.from('gates').update(patch).eq('id', GATE_ID);
-  if (error) { alert('Could not save that setting — check the connection.'); return; }
+  if (error) { alert(t('setting_fail')); return; }
   s[k] = val; render();
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) act(b.dataset.act, b.dataset.arg); else if (S.langOpen && !e.target.closest('.langmenu')) { S.langOpen = false; render(); } });
@@ -1112,75 +1176,75 @@ function dashView() {
   const perDay = n => (n / S.range).toFixed(n / S.range >= 10 ? 0 : 1);
 
   return `<div class="screen"><div class="dash">
-    <header class="top"><span class="brand">${esc(s.community)} dashboard</span>
-      <button class="btn" data-act="home">Back to gate</button></header>
+    <header class="top"><span class="brand">${esc(s.community)} ${t('dash_suffix')}</span>
+      <button class="btn" data-act="home">${t('back_to_gate')}</button></header>
 
-    <p class="strip"><span class="dot live"></span>Live — synced across every tablet at this gate.</p>
+    <p class="strip"><span class="dot live"></span>${t('live_sync')}</p>
 
     <div class="seg" style="margin-bottom:4px">
-      ${[[1, 'Today'], [7, '7 days'], [30, '30 days']].map(([n, l]) => `<button data-act="range" data-arg="${n}" aria-pressed="${S.range === n}">${l}</button>`).join('')}
+      ${[[1, t('range_today')], [7, t('range_7')], [30, t('range_30')]].map(([n, l]) => `<button data-act="range" data-arg="${n}" aria-pressed="${S.range === n}">${l}</button>`).join('')}
     </div>
 
     <div class="kpis">
-      <div class="kpi"><b>${vis.length}</b><span>Visitors, ${perDay(vis.length)}/day${refused ? ', ' + refused + ' refused' : ''}</span></div>
-      <div class="kpi"><b>${del.length}</b><span>Deliveries, ${perDay(del.length)}/day</span></div>
-      <div class="kpi"><b>${ev.filter(e => e.type === 'service').length}</b><span>Services, ${perDay(ev.filter(e => e.type === 'service').length)}/day</span></div>
-      <div class="kpi"><b>${busyH >= 0 ? hlab(busyH) : '–'}</b><span>Busiest hour${busyH >= 0 ? ` (${maxH})` : ''}</span></div>
-      <div class="kpi"><b>${cos[0] ? esc(cos[0][0]) : '–'}</b><span>Top delivery company</span></div>
+      <div class="kpi"><b>${num(vis.length)}</b><span>${t('tile_visitor')}, ${num(perDay(vis.length))}${t('per_day')}${refused ? ', ' + num(refused) + ' ' + t('refused_suffix') : ''}</span></div>
+      <div class="kpi"><b>${num(del.length)}</b><span>${t('tile_delivery')}, ${num(perDay(del.length))}${t('per_day')}</span></div>
+      <div class="kpi"><b>${num(ev.filter(e => e.type === 'service').length)}</b><span>${t('tile_service')}, ${num(perDay(ev.filter(e => e.type === 'service').length))}${t('per_day')}</span></div>
+      <div class="kpi"><b>${busyH >= 0 ? hlab(busyH) : '–'}</b><span>${t('busiest_hour')}${busyH >= 0 ? ` (${num(maxH)})` : ''}</span></div>
+      <div class="kpi"><b>${cos[0] ? esc(lbl(cos[0][0])) : '–'}</b><span>${t('top_delivery_company')}</span></div>
     </div>
 
-    <p class="strip">Inside right now: <b>${ins.length}</b>${overN ? `, <b style="color:var(--gold)">${overN} over the time limit</b>` : ''}${avgStay ? `. Average visitor stay: <b>${fmtDur(avgStay)}</b>` : ''}</p>
+    <p class="strip">${t('inside_now')} <b>${num(ins.length)}</b>${overN ? `, <b style="color:var(--gold)">${num(overN)} ${t('over_time_limit')}</b>` : ''}${avgStay ? `. ${t('avg_visitor_stay')} <b>${fmtDur(avgStay)}</b>` : ''}</p>
 
     <div class="two">
-      <div class="panel"><h3>Traffic by hour</h3>
-        <div class="legend"><span><i style="background:var(--gold)"></i>Deliveries</span><span><i style="background:var(--teal)"></i>Visitors</span></div>
-        ${ev.length ? hourChart(ev) : '<p class="empty">No entries in this period yet.</p>'}</div>
-      <div class="panel"><h3>Deliveries by company</h3>
-        ${cos.length ? cos.map(([n, c]) => `<div class="bar"><span>${esc(n)}</span><div><i style="width:${c / cos[0][1] * 100}%"></i></div><b>${c}</b></div>`).join('') : '<p class="empty">No deliveries in this period yet.</p>'}</div>
+      <div class="panel"><h3>${t('traffic_by_hour')}</h3>
+        <div class="legend"><span><i style="background:var(--gold)"></i>${t('tile_delivery')}</span><span><i style="background:var(--teal-l)"></i>${t('tile_service')}</span><span><i style="background:var(--teal)"></i>${t('tile_visitor')}</span></div>
+        ${ev.length ? hourChart(ev) : `<p class="empty">${t('no_entries_period')}</p>`}</div>
+      <div class="panel"><h3>${t('deliveries_by_company')}</h3>
+        ${cos.length ? cos.map(([n, c]) => `<div class="bar"><span>${esc(lbl(n))}</span><div><i style="width:${c / cos[0][1] * 100}%"></i></div><b>${num(c)}</b></div>`).join('') : `<p class="empty">${t('no_deliveries_period')}</p>`}</div>
     </div>
 
-    <div class="panel"><h3>Latest entries</h3>
-      ${ev.length ? `<div class="tablewrap"><table><thead><tr><th>Time</th><th>Type</th><th>Company / villa</th><th>Name</th><th>ID</th><th>Left</th>${isPremium() ? '<th>Resident</th>' : ''}</tr></thead><tbody>
+    <div class="panel"><h3>${t('latest_entries')}</h3>
+      ${ev.length ? `<div class="tablewrap"><table><thead><tr><th>${t('th_time')}</th><th>${t('th_type')}</th><th>${t('th_company_villa')}</th><th>${t('th_name')}</th><th>${t('th_id')}</th><th>${t('th_left')}</th>${isPremium() ? `<th>${t('th_resident')}</th>` : ''}</tr></thead><tbody>
         ${ev.slice().sort((a, b) => b.ts - a.ts).slice(0, 30).map(e => `<tr>
-          <td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
-          <td>${e.type === 'delivery' ? 'Delivery' : 'Visitor'}</td><td>${esc(whereOf(e))}</td>
-          ${e.anon ? '<td class="gone" colspan="2">Erased after ' + s.retention + ' days</td>' : (e.nameEn || e.idn) ? `<td>${esc(e.nameEn)}${e.nameAr ? ' / <span dir="rtl">' + esc(e.nameAr) + '</span>' : ''}</td><td>${esc(maskId(e.idn))}${e.phone ? '<br><span class="small">' + esc(e.phone) + '</span>' : ''}</td>` : `<td colspan="2">${e.carColor || e.plate ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td>`}
+          <td>${esc(num(new Date(e.ts).toLocaleString(isAr() ? 'ar-AE-u-nu-arab' : [], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })))}</td>
+          <td>${esc(typeLabel(e.type))}</td><td>${esc(whereOf(e))}</td>
+          ${e.anon ? `<td class="gone" colspan="2">${esc(t('erased_after', { n: num(s.retention) }))}</td>` : (e.nameEn || e.idn) ? `<td>${esc(e.nameEn)}${e.nameAr ? ' / <span dir="rtl">' + esc(e.nameAr) + '</span>' : ''}</td><td>${esc(num(maskId(e.idn)))}${e.phone ? '<br><span class="small">' + esc(e.phone) + '</span>' : ''}</td>` : `<td colspan="2">${e.carColor || e.plate ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(num(e.plate)) : '') : '–'}</td>`}
           <td>${leftCell(e)}</td>${isPremium() ? `<td>${approvalLabel(e)}</td>` : ''}
-        </tr>`).join('')}</tbody></table></div>` : '<p class="empty">No entries recorded yet at this gate.</p>'}
+        </tr>`).join('')}</tbody></table></div>` : `<p class="empty">${t('no_entries_yet')}</p>`}
     </div>
 
-    <div class="panel"><h3>Settings</h3>
+    <div class="panel"><h3>${t('settings_title')}</h3>
       <div class="settings">
-        <div class="field"><label>Plan</label><div style="display:flex;gap:12px;align-items:center;min-height:48px"><span class="tag ${isPremium() ? 'delivery' : 'visitor'}">${isPremium() ? 'Premium' : 'Basic'}</span><button class="btn" data-act="plan" style="min-height:42px;padding:6px 16px">Change plan</button></div></div>
-        <div class="field"><label for="s1">Community / gate name</label><input id="s1" data-set="community" value="${esc(s.community)}"></div>
-        <div class="field"><label for="s2">Erase names, IDs and phone numbers after (days)</label><input id="s2" data-set="retention" type="number" min="1" max="365" value="${s.retention}"></div>
-        <div class="field"><label for="s3">Delivery companies (comma separated)</label><input id="s3" data-set="companies" value="${esc(s.companies.join(', '))}"></div>
-        <div class="field"><label for="s4">Villa sections / blocks (comma separated)</label><input id="s4" data-set="sections" value="${esc(s.sections.join(', '))}"></div>
-        <div class="field"><label for="s4b">Sub-communities (comma separated)</label><input id="s4b" data-set="clusters" value="${esc(s.clusters.join(', '))}"></div>
-        <div class="field"><label for="s5">Manager PIN (4 digits)</label><input id="s5" data-set="pin" inputmode="numeric" maxlength="4" value="${esc(s.pin)}"></div>
-        <div class="field"><label for="s7">Track when deliveries leave</label><select id="s7" data-set="trackDeliveryExit"><option value="off" ${!s.trackDeliveryExit ? 'selected' : ''}>Off — faster, deliveries won't show as "inside"</option><option value="on" ${s.trackDeliveryExit ? 'selected' : ''}>On — guard taps Out for deliveries too</option></select></div>
-        <div class="field"><label for="s8">Delivery time limit (minutes)</label><input id="s8" data-set="overstayMin" inputmode="numeric" value="${s.overstayMin}"></div>
-        ${isPremium() ? `<div class="field"><label for="s6">Ask the resident before visitors enter</label><select id="s6" data-set="approval"><option value="off" ${!s.approval ? 'selected' : ''}>Off</option><option value="on" ${s.approval ? 'selected' : ''}>On</option></select></div>
-        <div class="field"><label for="s9">Assume people left after (hours)</label><input id="s9" data-set="assumeLeftHours" inputmode="numeric" value="${s.assumeLeftHours}"></div>
-        <div class="field full"><label for="s10">Villa phone numbers (one per line: A-12, 0501234567)</label><textarea id="s10" data-set="directory">${esc(Object.entries(s.directory || {}).map(([k, v]) => k + ', ' + v).join('\n'))}</textarea>
-          <p class="small">These are residents' personal numbers. They stay until removed.</p></div>` : `<div class="field full"><p class="small"><b>Premium adds</b> returning drivers/visitors and resident approval.</p></div>`}
+        <div class="field"><label>${t('plan_label')}</label><div style="display:flex;gap:12px;align-items:center;min-height:48px"><span class="tag ${isPremium() ? 'delivery' : 'visitor'}">${isPremium() ? t('plan_premium') : t('plan_basic')}</span><button class="btn" data-act="plan" style="min-height:42px;padding:6px 16px">${t('change_plan')}</button></div></div>
+        <div class="field"><label for="s1">${t('community_label')}</label><input id="s1" data-set="community" value="${esc(s.community)}"></div>
+        <div class="field"><label for="s2">${t('retention_label')}</label><input id="s2" data-set="retention" type="number" min="1" max="365" value="${s.retention}"></div>
+        <div class="field"><label for="s3">${t('companies_label')}</label><input id="s3" data-set="companies" value="${esc(s.companies.join(', '))}"></div>
+        <div class="field"><label for="s4">${t('sections_label')}</label><input id="s4" data-set="sections" value="${esc(s.sections.join(', '))}"></div>
+        <div class="field"><label for="s4b">${t('clusters_label')}</label><input id="s4b" data-set="clusters" value="${esc(s.clusters.join(', '))}"></div>
+        <div class="field"><label for="s5">${t('pin_setting_label')}</label><input id="s5" data-set="pin" inputmode="numeric" maxlength="4" value="${esc(s.pin)}"></div>
+        <div class="field"><label for="s7">${t('track_exit_label')}</label><select id="s7" data-set="trackDeliveryExit"><option value="off" ${!s.trackDeliveryExit ? 'selected' : ''}>${t('track_exit_off')}</option><option value="on" ${s.trackDeliveryExit ? 'selected' : ''}>${t('track_exit_on')}</option></select></div>
+        <div class="field"><label for="s8">${t('overstay_label')}</label><input id="s8" data-set="overstayMin" inputmode="numeric" value="${s.overstayMin}"></div>
+        ${isPremium() ? `<div class="field"><label for="s6">${t('approval_setting_label')}</label><select id="s6" data-set="approval"><option value="off" ${!s.approval ? 'selected' : ''}>${t('off_label')}</option><option value="on" ${s.approval ? 'selected' : ''}>${t('on_label')}</option></select></div>
+        <div class="field"><label for="s9">${t('assume_left_label')}</label><input id="s9" data-set="assumeLeftHours" inputmode="numeric" value="${s.assumeLeftHours}"></div>
+        <div class="field full"><label for="s10">${t('directory_label')}</label><textarea id="s10" data-set="directory">${esc(Object.entries(s.directory || {}).map(([k, v]) => k + ', ' + v).join('\n'))}</textarea>
+          <p class="small">${t('directory_note')}</p></div>` : `<div class="field full"><p class="small">${t('premium_note')}</p></div>`}
       </div>
       <div class="actions">
-        <button class="btn" data-act="csv">Export CSV</button>
-        <button class="btn" data-act="purge">Erase old details now</button>
+        <button class="btn" data-act="csv">${t('export_csv')}</button>
+        <button class="btn" data-act="purge">${t('erase_now')}</button>
       </div>
     </div>
   </div></div>`;
 }
 function hourChart(ev) {
-  const d = Array(24).fill(0), v = Array(24).fill(0);
-  ev.forEach(e => (e.type === 'delivery' ? d : v)[new Date(e.ts).getHours()]++);
-  const max = Math.max(1, ...d.map((x, i) => x + v[i])), H = 150;
+  const d = Array(24).fill(0), v = Array(24).fill(0), sv = Array(24).fill(0);
+  ev.forEach(e => (e.type === 'delivery' ? d : e.type === 'service' ? sv : v)[new Date(e.ts).getHours()]++);
+  const max = Math.max(1, ...d.map((x, i) => x + v[i] + sv[i])), H = 150;
   let bars = '', lab = '';
   for (let h = 0; h < 24; h++) {
-    const x = h * 30 + 4, dh = d[h] / max * H, vh = v[h] / max * H;
-    bars += `<rect x="${x}" y="${H - vh}" width="22" height="${vh}" rx="3" fill="var(--teal)"/><rect x="${x}" y="${H - vh - dh}" width="22" height="${dh}" rx="3" fill="var(--gold)"/>`;
-    if (h % 3 === 0) lab += `<text x="${x + 11}" y="${H + 20}" text-anchor="middle">${hlab(h)}</text>`;
+    const x = h * 30 + 4, dh = d[h] / max * H, vh = v[h] / max * H, svh = sv[h] / max * H;
+    bars += `<rect x="${x}" y="${H - vh}" width="22" height="${vh}" rx="3" fill="var(--teal)"/><rect x="${x}" y="${H - vh - svh}" width="22" height="${svh}" rx="3" fill="var(--teal-l)"/><rect x="${x}" y="${H - vh - svh - dh}" width="22" height="${dh}" rx="3" fill="var(--gold)"/>`;
+    if (h % 3 === 0) lab += `<text x="${x + 11}" y="${H + 20}" text-anchor="middle">${esc(num(hlab(h)))}</text>`;
   }
   return `<svg class="chart" viewBox="0 0 720 ${H + 28}" width="100%" role="img">${bars}${lab}</svg>`;
 }

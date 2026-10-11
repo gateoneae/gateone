@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Gatesone manager dashboard: final version -->
+<!-- Gatesone manager dashboard: upload this one as manager.html. Kept in sync with index.html's app code; the only behavioral difference is that this build boots straight to the manager PIN screen instead of the guard home screen. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -62,7 +62,7 @@ html[dir="rtl"] .langpop button{text-align:right}
 
 .home{flex:1;display:flex;flex-direction:column;gap:24px;padding-top:4px}
 .home h1{margin:0;font-size:clamp(30px,5vw,50px);line-height:1.1;font-weight:600;letter-spacing:-.02em;font-family:"Fraunces",serif}
-.tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,20px);min-height:42vh}
+.tiles{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(12px,2vw,20px);min-height:42vh}
 @media (max-aspect-ratio:1/1){.tiles{grid-template-columns:1fr}}
 .tile{position:relative;overflow:hidden;border:0;border-radius:var(--r-xl);padding:clamp(22px,3vw,38px);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;box-shadow:var(--sh-2);transition:transform .12s}
 html[dir="rtl"] .tile{text-align:right;align-items:flex-end}
@@ -71,6 +71,8 @@ html[dir="rtl"] .tile{text-align:right;align-items:flex-end}
 .tile .t{display:block;font-size:clamp(36px,6.5vw,64px);line-height:1;font-weight:600;letter-spacing:-.02em;font-family:"Fraunces",serif}
 .tile.delivery{background:var(--gold);color:var(--black)}
 .tile.visitor{background:var(--teal);color:var(--white)}
+.tile.service{background:var(--paper);color:var(--ink);border:2px solid var(--teal)}
+.tag.service{background:var(--paper);color:var(--ink);border:2px solid var(--teal)}
 .leaverow .btn{width:100%;min-height:60px;font-size:17px;display:flex;justify-content:space-between;align-items:center}
 .leaverow .count{background:var(--ink);color:var(--paper);border-radius:99px;padding:5px 15px;font-weight:800;font-size:14px}
 .tip{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-top:16px;font-size:14px;color:var(--muted)}
@@ -108,9 +110,20 @@ html[dir="rtl"] .tile{text-align:right;align-items:flex-end}
 .cam{position:relative;background:#0a0a0a;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:16/10;max-width:900px;width:100%;box-shadow:var(--sh-2)}
 .cam video{width:100%;height:100%;object-fit:cover;display:block}
 .frame{position:absolute;inset:10% 7%;border:3px dashed rgba(255,255,255,.85);border-radius:16px;pointer-events:none}
-.camMsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;padding:18px}
-.scanrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;max-width:900px}
+.camMsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;padding:18px;background:rgba(10,10,10,.7)}
+.camMsg[hidden]{display:none}
+.scanrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;max-width:900px;align-items:center}
 .scanrow .btn{flex:1;min-width:170px;text-align:center}
+.scanrow .btn.snapbtn{flex:0 0 88px;min-width:88px;width:88px;height:88px;min-height:88px;padding:0;border-radius:50%;display:grid;place-items:center;box-shadow:var(--sh-2)}
+.snapbtn svg{width:40px;height:40px}
+
+/* ---- smooth feel: soft screen-in, quick press feedback, no text selection on taps ---- */
+.btn,.pick,.chip,.pad button,.tile,.rec,.iconbtn{transition:transform .12s ease,background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease;-webkit-user-select:none;user-select:none}
+.pick:active,.chip:active,.pad button:active,.rec:active{transform:scale(.96)}
+.display{transition:transform .08s ease}
+#app.enter .screen{animation:rise .24s cubic-bezier(.2,.7,.2,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#app.enter .screen{animation:none}.btn,.pick,.chip,.pad button,.tile,.rec,.iconbtn{transition:none}}
 .note{margin-top:13px;min-height:24px;font-weight:700}
 .note.bad{color:var(--warn)}
 .hint{color:var(--muted);margin:0 0 15px;max-width:60ch}
@@ -254,7 +267,7 @@ function rowToSettings(g) {
 }
 const SETTING_COL = { community: 'community', retention: 'retention_days', pin: 'pin', companies: 'companies', sections: 'sections', clusters: 'clusters', approval: 'approval_enabled', trackDeliveryExit: 'track_delivery_exit', overstayMin: 'overstay_min', assumeLeftHours: 'assume_left_hours', directory: 'directory' };
 function rowToEvent(r) {
-  return { id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, cluster: r.cluster || '', section: r.section, villa: r.villa, nameEn: r.name_en, nameAr: r.name_ar, idn: r.id_number, phone: r.phone || '', carColor: r.car_color || '', plate: r.plate_number || '', anon: r.anonymized, approval: r.approval, demo: !!r.demo, outAt: r.out_at ? new Date(r.out_at).getTime() : null, photoPath: r.photo_path || null };
+  return { id: r.id, ts: new Date(r.ts).getTime(), type: r.type, company: r.company, cluster: r.cluster || '', section: r.section, villa: r.villa, nameEn: r.name_en, nameAr: r.name_ar, idn: r.id_number, phone: r.phone || '', carColor: r.car_color || '', plate: r.plate_number || '', anon: r.anonymized, approval: r.approval, outAt: r.out_at ? new Date(r.out_at).getTime() : null, photoPath: r.photo_path || null };
 }
 
 /* ---------- language ---------- */
@@ -263,6 +276,9 @@ const STR = {
   home_title: { en: 'Who is arriving?', ar: 'من القادم؟' },
   tile_delivery: { en: 'Delivery', ar: 'توصيل' },
   tile_visitor: { en: 'Visitor', ar: 'زائر' },
+  tile_service: { en: 'Service', ar: 'خدمة' },
+  service_title: { en: 'Which service?', ar: 'أي خدمة؟' },
+  service_hint_service: { en: 'Choose the type of service.', ar: 'اختر نوع الخدمة.' },
   leaving: { en: 'Someone leaving?', ar: 'هل يغادر أحد؟' },
   inside_suffix: { en: 'inside', ar: 'بالداخل' },
   cancel: { en: 'Cancel', ar: 'إلغاء' },
@@ -316,10 +332,122 @@ const STR = {
   connect_btn: { en: 'Connect', ar: 'اتصال' },
   conn_error: { en: 'Could not connect. Check the internet connection and try again.', ar: 'تعذّر الاتصال. تحقق من الإنترنت وحاول مرة أخرى.' },
   retry: { en: 'Try again', ar: 'حاول مرة أخرى' },
-  home_tip: { en: 'Tap Delivery or Visitor to log someone in. Tap the house icon anytime to start over.', ar: 'اضغط توصيل أو زائر لتسجيل شخص. اضغط أيقونة المنزل في أي وقت للبدء من جديد.' }
+  home_tip: { en: 'Tap Delivery, Service or Visitor to log someone in. Tap the house icon anytime to start over.', ar: 'اضغط توصيل أو خدمة أو زائر لتسجيل شخص. اضغط أيقونة المنزل في أي وقت للبدء من جديد.' },
+  villa: { en: 'Villa', ar: 'فيلا' },
+  phone_required: { en: 'Enter a phone number first.', ar: 'أدخل رقم الهاتف أولاً.' },
+  need_name_id: { en: 'Enter a name or an ID number first.', ar: 'أدخل الاسم أو رقم الهوية أولاً.' },
+  need_vehicle: { en: 'Enter the car color, or the plate code and number.', ar: 'أدخل لون السيارة، أو رمز ورقم اللوحة.' },
+  save_failed: { en: 'Could not save:', ar: 'تعذّر الحفظ:' },
+  save_failed_short: { en: 'Could not save. Try again.', ar: 'تعذّر الحفظ. حاول مرة أخرى.' },
+  kept_for: { en: 'Kept for {n} days, then erased.', ar: 'تُحفظ لمدة {n} يومًا، ثم تُحذف.' },
+  wrong_pin: { en: 'Wrong PIN.', ar: 'رمز خاطئ.' },
+  ask_resident: { en: 'Ask the resident', ar: 'اسأل الساكن' },
+  a_visitor: { en: 'A visitor', ar: 'زائر' },
+  no_phone_villa: { en: 'No phone number saved for Villa {v}.', ar: 'لا يوجد رقم هاتف محفوظ للفيلا {v}.' },
+  resident_said: { en: 'What did the resident say?', ar: 'ماذا قال الساكن؟' },
+  yes_in: { en: 'Yes, let them in', ar: 'نعم، اسمح بالدخول' },
+  no_refuse: { en: 'No, refuse entry', ar: 'لا، ارفض الدخول' },
+  no_answer: { en: 'No answer', ar: 'لا يوجد رد' },
+  call: { en: 'Call', ar: 'اتصال' },
+  everyone: { en: 'Everyone', ar: 'الجميع' },
+  close: { en: 'Close', ar: 'إغلاق' },
+  out: { en: 'Out', ar: 'خرج' },
+  over_limit: { en: 'Over limit', ar: 'تجاوز المدة' },
+  nobody_inside: { en: 'Nobody is marked as inside.', ar: 'لا يوجد أحد بالداخل.' },
+  nobody_inside_delivery: { en: 'Nobody is marked as inside. Deliveries only show up here once "Track when deliveries leave" is turned on in Manager settings.', ar: 'لا يوجد أحد بالداخل. تظهر عمليات التوصيل هنا فقط بعد تفعيل "تتبع خروج التوصيل" في إعدادات المدير.' },
+  id_ending: { en: 'ID ending', ar: 'هوية تنتهي بـ' },
+  unknown: { en: 'Unknown', ar: 'غير معروف' },
+  no_name: { en: 'No name', ar: 'بدون اسم' },
+  min: { en: 'min', ar: 'د' },
+  hr: { en: 'h', ar: 'س' },
+  id_diff: { en: 'The ID number is different from an earlier scan.', ar: 'رقم الهوية مختلف عن مسح سابق.' },
+  out_photo_confirm: { en: 'Are you sure? Marking this visitor as left also permanently deletes their vehicle photo.', ar: 'هل أنت متأكد؟ تسجيل خروج هذا الزائر يحذف صورة سيارته نهائيًا.' },
+  pair_wrong: { en: 'That code is wrong or has expired.', ar: 'الرمز خاطئ أو منتهي الصلاحية.' },
+  color_ph: { en: 'e.g. White', ar: 'مثال: أبيض' },
+  dash_suffix: { en: 'dashboard', ar: 'لوحة التحكم' },
+  back_to_gate: { en: 'Back to gate', ar: 'رجوع إلى البوابة' },
+  live_sync: { en: 'Live — synced across every tablet at this gate.', ar: 'مباشر — متزامن مع كل الأجهزة في هذه البوابة.' },
+  range_today: { en: 'Today', ar: 'اليوم' },
+  range_7: { en: '7 days', ar: '7 أيام' },
+  range_30: { en: '30 days', ar: '30 يومًا' },
+  per_day: { en: '/day', ar: '/يوم' },
+  refused_suffix: { en: 'refused', ar: 'مرفوض' },
+  busiest_hour: { en: 'Busiest hour', ar: 'أكثر ساعة ازدحامًا' },
+  top_delivery_company: { en: 'Top delivery company', ar: 'أعلى شركة توصيل' },
+  inside_now: { en: 'Inside right now:', ar: 'بالداخل الآن:' },
+  over_time_limit: { en: 'over the time limit', ar: 'تجاوزوا الحد الزمني' },
+  avg_visitor_stay: { en: 'Average visitor stay:', ar: 'متوسط مدة بقاء الزائر:' },
+  traffic_by_hour: { en: 'Traffic by hour', ar: 'الحركة حسب الساعة' },
+  no_entries_period: { en: 'No entries in this period yet.', ar: 'لا توجد سجلات في هذه الفترة بعد.' },
+  deliveries_by_company: { en: 'Deliveries by company', ar: 'التوصيل حسب الشركة' },
+  no_deliveries_period: { en: 'No deliveries in this period yet.', ar: 'لا توجد عمليات توصيل في هذه الفترة بعد.' },
+  latest_entries: { en: 'Latest entries', ar: 'آخر السجلات' },
+  th_time: { en: 'Time', ar: 'الوقت' },
+  th_type: { en: 'Type', ar: 'النوع' },
+  th_company_villa: { en: 'Company / villa', ar: 'الشركة / الفيلا' },
+  th_name: { en: 'Name', ar: 'الاسم' },
+  th_id: { en: 'ID', ar: 'الهوية' },
+  th_left: { en: 'Left', ar: 'الخروج' },
+  th_resident: { en: 'Resident', ar: 'الساكن' },
+  erased_after: { en: 'Erased after {n} days', ar: 'تم الحذف بعد {n} يومًا' },
+  left_inside: { en: 'Inside', ar: 'بالداخل' },
+  settings_title: { en: 'Settings', ar: 'الإعدادات' },
+  plan_label: { en: 'Plan', ar: 'الخطة' },
+  plan_basic: { en: 'Basic', ar: 'أساسية' },
+  plan_premium: { en: 'Premium', ar: 'مميزة' },
+  change_plan: { en: 'Change plan', ar: 'تغيير الخطة' },
+  community_label: { en: 'Community / gate name', ar: 'المجتمع / اسم البوابة' },
+  retention_label: { en: 'Erase names, IDs and phone numbers after (days)', ar: 'حذف الأسماء والهويات وأرقام الهاتف بعد (أيام)' },
+  companies_label: { en: 'Delivery companies (comma separated)', ar: 'شركات التوصيل (مفصولة بفواصل)' },
+  sections_label: { en: 'Villa sections / blocks (comma separated)', ar: 'أقسام / مجموعات الفلل (مفصولة بفواصل)' },
+  clusters_label: { en: 'Sub-communities (comma separated)', ar: 'المجتمعات الفرعية (مفصولة بفواصل)' },
+  pin_setting_label: { en: 'Manager PIN (4 digits)', ar: 'رمز المدير (4 أرقام)' },
+  track_exit_label: { en: 'Track when deliveries leave', ar: 'تتبع خروج التوصيل' },
+  track_exit_off: { en: 'Off — faster, deliveries won\'t show as "inside"', ar: 'إيقاف — أسرع، لن تظهر التوصيلات كـ"بالداخل"' },
+  track_exit_on: { en: 'On — guard taps Out for deliveries too', ar: 'تشغيل — يضغط الحارس خروج للتوصيل أيضًا' },
+  overstay_label: { en: 'Delivery time limit (minutes)', ar: 'الحد الزمني للتوصيل (دقائق)' },
+  approval_setting_label: { en: 'Ask the resident before visitors enter', ar: 'سؤال الساكن قبل دخول الزوار' },
+  assume_left_label: { en: 'Assume people left after (hours)', ar: 'افتراض أن الأشخاص غادروا بعد (ساعات)' },
+  directory_label: { en: 'Villa phone numbers (one per line: A-12, 0501234567)', ar: 'أرقام هواتف الفلل (سطر لكل رقم: A-12, 0501234567)' },
+  directory_note: { en: "These are residents' personal numbers. They stay until removed.", ar: 'هذه أرقام شخصية للسكان. تبقى محفوظة حتى تُحذف.' },
+  premium_note: { en: 'Premium adds returning drivers/visitors and resident approval.', ar: 'تضيف الخطة المميزة ميزة الزوار/السائقين المتكررين وموافقة الساكن.' },
+  export_csv: { en: 'Export CSV', ar: 'تصدير CSV' },
+  erase_now: { en: 'Erase old details now', ar: 'حذف البيانات القديمة الآن' },
+  no_entries_yet: { en: 'No entries recorded yet at this gate.', ar: 'لا توجد سجلات في هذه البوابة بعد.' },
+  off_label: { en: 'Off', ar: 'إيقاف' },
+  on_label: { en: 'On', ar: 'تشغيل' },
+  approved_label: { en: 'Approved', ar: 'تمت الموافقة' },
+  purge_confirm: { en: 'Are you sure? This permanently erases names, ID numbers and phone numbers for every entry older than the retention period. It cannot be undone.', ar: 'هل أنت متأكد؟ سيؤدي هذا إلى حذف الأسماء وأرقام الهوية والهاتف نهائيًا لكل سجل أقدم من فترة الاحتفاظ. لا يمكن التراجع عن ذلك.' },
+  purge_fail: { en: 'Could not run the erase job. Try again.', ar: 'تعذّر تشغيل مهمة الحذف. حاول مرة أخرى.' },
+  purge_done: { en: 'Old details erased where the retention period had passed.', ar: 'تم حذف البيانات القديمة التي تجاوزت فترة الاحتفاظ.' },
+  owner_code_prompt: { en: 'Gatesone owner code', ar: 'رمز مالك جيتسون' },
+  wrong_code: { en: 'Wrong code.', ar: 'رمز خاطئ.' },
+  plan_fail: { en: 'Could not update the plan.', ar: 'تعذّر تحديث الخطة.' },
+  pin_must_4: { en: 'The PIN must be exactly 4 digits.', ar: 'يجب أن يكون الرمز 4 أرقام فقط.' },
+  retention_longer_confirm: { en: 'Keeping names, ID numbers and phone numbers longer than 14 days means you are responsible for protecting them. Continue?', ar: 'الاحتفاظ بالأسماء وأرقام الهوية والهاتف لأكثر من 14 يومًا يعني أنك مسؤول عن حمايتها. هل تريد الاستمرار؟' },
+  retention_shorter_confirm: { en: 'Are you sure? Shortening the retention period means older names, ID numbers and phone numbers will be erased sooner, and that cannot be undone.', ar: 'هل أنت متأكد؟ تقليل فترة الاحتفاظ يعني حذف الأسماء وأرقام الهوية والهاتف الأقدم بشكل أسرع، ولا يمكن التراجع عن ذلك.' },
+  setting_fail: { en: 'Could not save that setting — check the connection.', ar: 'تعذّر حفظ هذا الإعداد — تحقق من الاتصال.' },
+  default_gate_name: { en: 'Main Gate', ar: 'البوابة الرئيسية' },
+  lock_dashboard: { en: 'Lock', ar: 'قفل' }
+};
+// Display names for stored values (the database keeps the English value).
+const VAL_AR = {
+  'Maintenance': 'صيانة', 'Cleaning': 'تنظيف', 'Contractor': 'مقاول', 'Plumber': 'سبّاك', 'Electrician': 'كهربائي',
+  'AC technician': 'فني تكييف', 'Pest control': 'مكافحة الحشرات', 'Taxi / Ride': 'تاكسي / توصيلة', 'Real estate / Viewing': 'عقارات / معاينة', 'Other': 'أخرى',
+  'Talabat': 'طلبات', 'Deliveroo': 'ديليفرو', 'Noon': 'نون', 'Amazon': 'أمازون', 'Careem': 'كريم', 'Keeta': 'كيتا',
+  'Dubai': 'دبي', 'Abu Dhabi': 'أبوظبي', 'Sharjah': 'الشارقة', 'Ajman': 'عجمان', 'RAK': 'رأس الخيمة', 'Fujairah': 'الفجيرة', 'UAQ': 'أم القيوين'
 };
 function loadLang() { try { return localStorage.getItem('gateone_lang') || 'en'; } catch (e) { return 'en'; } }
-function t(key) { const row = STR[key]; if (!row) return key; return row[S.lang] || row.en; }
+function t(key, vars) { const row = STR[key]; if (!row) return key; let s = row[S.lang] || row.en; if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]); return s; }
+const isAr = () => S.lang === 'ar';
+// Show digits as Arabic-Indic numerals in Arabic mode (display only; stored values stay 0-9).
+function num(s) { s = String(s == null ? '' : s); return isAr() ? s.replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]) : s; }
+// Turn Arabic-Indic / Persian digits typed on an Arabic keyboard back into 0-9 so they are not thrown away.
+function toWestern(s) { return String(s == null ? '' : s).replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660).replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0); }
+const lbl = v => (isAr() && VAL_AR[v]) ? VAL_AR[v] : v;
+const arrow = () => isAr() ? ' ← ' : ' → ';
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString(isAr() ? 'ar-AE-u-nu-arab' : [], { hour: '2-digit', minute: '2-digit' }); }
+function villaText(key) { return t('villa') + ' ' + num(key); }
 function applyLangToDoc() { const l = LANGS[S.lang] || LANGS.en; document.documentElement.lang = S.lang; document.documentElement.dir = l.dir; }
 function loadTheme() { try { return localStorage.getItem('gateone_theme') || 'auto'; } catch (e) { return 'auto'; } }
 function tipSeen() { try { return localStorage.getItem('gateone_tip_seen') === '1'; } catch (e) { return true; } }
@@ -346,7 +474,9 @@ const I = {
   globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></svg>',
   sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
   moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>',
-  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>'
+  wrench: '<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"><path d="M76 16a26 26 0 0 0-24 34L16 86a10 10 0 0 0 14 14l36-36a26 26 0 0 0 34-24l-16 16-14-4-4-14z"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h12v-9"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8h3l1.6-2.4h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.6"/></svg>'
 };
 
 /* ---------- boot: anonymous device auth + pairing ---------- */
@@ -363,7 +493,7 @@ async function boot() {
     const { data: devRow, error: de } = await sb.from('gate_devices').select('gate_id').eq('device_auth_id', DEVICE_ID).maybeSingle();
     if (de) throw de;
     if (!devRow) {
-      // Serena manager build: auto-connect to the shared Serena gate, then go straight to the PIN screen (no guard flow here).
+      // Serena demo build: auto-pair straight into the shared Serena gate instead of showing the pairing screen.
       const { data: pairedGateId, error: pe } = await sb.rpc('pair_demo_casaviva');
       if (pe) throw pe;
       GATE_ID = pairedGateId;
@@ -384,7 +514,7 @@ async function boot() {
 async function loadGate() {
   const [{ data: gateRow, error: ge }, { data: rows, error: ee }] = await Promise.all([
     sb.from('gates').select('*').eq('id', GATE_ID).single(),
-    sb.from('entries').select('*').eq('gate_id', GATE_ID).order('ts', { ascending: true })  // includes demo rows when the founder turns demo data on
+    sb.from('entries').select('*').eq('gate_id', GATE_ID).eq('demo', false).order('ts', { ascending: true })
   ]);
   if (ge) throw ge; if (ee) throw ee;
   db.settings = rowToSettings(gateRow);
@@ -398,8 +528,8 @@ function subscribeRealtime() {
     .subscribe();
 }
 function applyEntryChange(p) {
-  if (p.eventType === 'INSERT') { if (!db.events.find(e => e.id === p.new.id)) db.events.push(rowToEvent(p.new)); }
-  else if (p.eventType === 'UPDATE') { const i = db.events.findIndex(e => e.id === p.new.id); if (i >= 0) db.events[i] = rowToEvent(p.new); else db.events.push(rowToEvent(p.new)); }
+  if (p.eventType === 'INSERT') { if (p.new.demo) return; if (!db.events.find(e => e.id === p.new.id)) db.events.push(rowToEvent(p.new)); }
+  else if (p.eventType === 'UPDATE') { if (p.new.demo) return; const i = db.events.findIndex(e => e.id === p.new.id); if (i >= 0) db.events[i] = rowToEvent(p.new); }
   else if (p.eventType === 'DELETE') { db.events = db.events.filter(e => e.id !== p.old.id); }
   if (['home', 'inside', 'dash'].includes(S.screen)) render();
 }
@@ -411,7 +541,16 @@ function go(screen) {
   if (screen === 'scan') { startCam(); getWorker().catch(() => {}); }
   if (screen === 'done') doneT = setTimeout(() => go('home'), 5000);
 }
-function render() { applyLangToDoc(); applyTheme(); $('#app').innerHTML = VIEWS[S.screen](); window.scrollTo(0, 0); }
+let lastScreen = null;
+function render() {
+  applyLangToDoc(); applyTheme();
+  const app = $('#app'), changed = lastScreen !== S.screen, y = window.scrollY;
+  app.classList.toggle('enter', changed);   // only animate when the screen actually changes
+  app.innerHTML = VIEWS[S.screen]();
+  lastScreen = S.screen;
+  window.scrollTo(0, changed ? 0 : y);      // same screen: stay exactly where you were
+  if (stream) { const v = document.getElementById('cam') || document.getElementById('vcamvideo'); if (v && v.srcObject !== stream) { v.srcObject = stream; v.play().catch(() => {}); } }
+}
 
 /* ---------- shared chrome ---------- */
 function topbar(showManager) {
@@ -432,15 +571,18 @@ function flowHead(title, backAct, cancelLabel) {
     <div style="display:flex;gap:10px">${backAct ? `<button class="btn" data-act="${backAct}">${t('back')}</button>` : ''}<button class="btn" data-act="home">${cancelLabel || t('cancel')}</button></div></div>`;
 }
 function keypad(target) {
-  const k = n => `<button data-act="key" data-arg="${target}:${n}">${n}</button>`;
+  const k = n => `<button data-act="key" data-arg="${target}:${n}">${num(n)}</button>`;
   return `<div class="pad">${[1,2,3,4,5,6,7,8,9].map(k).join('')}
     <button class="fn" data-act="key" data-arg="${target}:clear">C</button>${k(0)}<button class="fn" data-act="key" data-arg="${target}:del">⌫</button></div>`;
 }
 
 /* ---------- views ---------- */
-const VISITOR_SERVICES = ['Guest / Family', 'Friend', 'Maintenance', 'Cleaning', 'Contractor', 'Taxi / Ride', 'Real estate / Viewing', 'Other'];
+const SERVICES = ['Maintenance', 'Cleaning', 'Contractor', 'Plumber', 'Electrician', 'AC technician', 'Pest control', 'Taxi / Ride', 'Real estate / Viewing', 'Other'];
 const DEFAULT_COMPANIES = ['Talabat', 'Deliveroo', 'Noon', 'Amazon', 'Careem', 'Keeta', 'Other'];
-function totalSteps() { return 4 + (needsApproval() ? 1 : 0); }
+// Visitors skip the company/service step, so their flow is one step shorter.
+const skipN = () => (S.type === 'visitor' ? 1 : 0);
+function totalSteps() { return 4 - skipN() + (needsApproval() ? 1 : 0); }
+const typeLabel = ty => ty === 'delivery' ? t('tile_delivery') : ty === 'service' ? t('tile_service') : t('tile_visitor');
 
 const VIEWS = {
   loading() { return `<div class="screen"><div class="center"><div class="spinner"></div><p>${t('connecting')}</p></div></div>`; },
@@ -463,46 +605,47 @@ const VIEWS = {
         <h1 class="disp">${t('home_title')}</h1>
         <div class="tiles">
           <button class="tile delivery" data-act="start" data-arg="delivery">${I.box}<span class="t">${t('tile_delivery')}</span></button>
+          <button class="tile service" data-act="start" data-arg="service">${I.wrench}<span class="t">${t('tile_service')}</span></button>
           <button class="tile visitor" data-act="start" data-arg="visitor">${I.person}<span class="t">${t('tile_visitor')}</span></button>
         </div>
-        <div class="leaverow"><button class="btn" data-act="inside"><span>${t('leaving')}</span><span class="count">${insideList().length} ${t('inside_suffix')}</span></button></div>
+        <div class="leaverow"><button class="btn" data-act="inside"><span>${t('leaving')}</span><span class="count">${num(insideList().length)} ${t('inside_suffix')}</span></button></div>
         ${S.showTip ? `<div class="tip"><span>${t('home_tip')}</span><button data-act="dismisstip" aria-label="Dismiss">✕</button></div>` : ''}
       </main></div>`;
   },
 
   company() {
     const del = S.type === 'delivery';
-    const list = del ? (db.settings.companies.length ? db.settings.companies : DEFAULT_COMPANIES) : VISITOR_SERVICES;
-    return `<div class="screen">${topbar()}${stepper(1, totalSteps())}${flowHead(del ? t('company_title') : t('service_title_visitor'))}
-      <p class="hint">${del ? t('service_hint_delivery') : t('service_hint_visitor')}</p>
-      <div class="grid">${list.map(c => `<button class="pick" data-act="company" data-arg="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>`;
+    const list = del ? (db.settings.companies.length ? db.settings.companies : DEFAULT_COMPANIES) : SERVICES;
+    return `<div class="screen">${topbar()}${stepper(1, totalSteps())}${flowHead(del ? t('company_title') : t('service_title'))}
+      <p class="hint">${del ? t('service_hint_delivery') : t('service_hint_service')}</p>
+      <div class="grid">${list.map(c => `<button class="pick" data-act="company" data-arg="${esc(c)}">${esc(lbl(c))}</button>`).join('')}</div></div>`;
   },
 
   villa() {
     const clusters = db.settings.clusters, secs = db.settings.sections;
-    const ok = (!clusters.length || S.cluster) && (!secs.length || S.section) && S.villa, del = S.type === 'delivery';
-    return `<div class="screen">${topbar()}${stepper(2, totalSteps())}${flowHead(del ? t('villa_title_delivery') : t('villa_title_visitor'), 'toCompany')}
+    const ok = villaReady(), del = S.type === 'delivery';
+    return `<div class="screen">${topbar()}${stepper(2 - skipN(), totalSteps())}${flowHead(del ? t('villa_title_delivery') : t('villa_title_visitor'), 'toCompany')}
       <div class="villa">
         <div>${clusters.length ? `<p class="label">${t('cluster_label')}</p>
           <div class="chips">${clusters.map(c => `<button class="chip wide" data-act="cluster" data-arg="${esc(c)}" aria-pressed="${S.cluster === c}">${esc(c)}</button>`).join('')}</div>` : ''}</div>
         <div>${secs.length ? `<p class="label">${t('section_label')}</p>
           <div class="chips">${secs.map(s => `<button class="chip" data-act="section" data-arg="${esc(s)}" aria-pressed="${S.section === s}">${esc(s)}</button>`).join('')}</div>` : ''}</div>
         <div><p class="label">${t('villa_label')}</p>
-          <div class="display" aria-live="polite">${esc(S.villa) || '–'}</div>${keypad('villa')}</div>
+          <div class="display" aria-live="polite">${esc(num(S.villa)) || '–'}</div>${keypad('villa')}</div>
       </div>
       <div style="margin-top:24px"><button class="btn primary big" data-act="next" ${ok ? '' : 'disabled'}>${t('next_scan')}</button></div></div>`;
   },
 
   scan() {
     const del = S.type === 'delivery';
-    return `<div class="screen">${topbar()}${stepper(3, totalSteps())}
+    return `<div class="screen">${topbar()}${stepper(3 - skipN(), totalSteps())}
       ${flowHead(t('scan_title'), 'toVilla')}
       <p class="hint">${t('scan_hint')}</p>
       ${recentHtml()}
       <div class="cam"><video id="cam" autoplay playsinline muted></video><div class="frame"></div>
         <div class="camMsg" id="camMsg" hidden>${t('camera_unavailable')}</div></div>
       <div class="scanrow">
-        <button class="btn primary big" id="snap" data-act="snap">${t('read_id')}</button>
+        <button class="btn primary snapbtn" id="snap" data-act="snap" aria-label="${t('read_id')}" title="${t('read_id')}">${I.camera}</button>
         <button class="btn big" data-act="typeit">${t('type_instead')}</button>
       </div>
       <div class="scanrow"><button class="btn big" style="width:100%" data-act="vehiclemode">${t('no_id_btn')}</button></div>
@@ -510,39 +653,34 @@ const VIEWS = {
   },
 
   confirm() {
-    const r = S.rec, del = S.type === 'delivery';
-    const where = del ? esc(S.company) + (S.villa ? ' → Villa ' + esc(villaKey(S.cluster, S.section, S.villa)) : '') : `Villa ${esc(villaKey(S.cluster, S.section, S.villa))}` + (S.company ? ' · ' + esc(S.company) : '');
-    return `<div class="screen">${topbar()}${stepper(4, totalSteps())}${flowHead(t('confirm_title'), 'toScan')}
+    const r = S.rec;
+    const where = whereNow();
+    return `<div class="screen">${topbar()}${stepper(4 - skipN(), totalSteps())}${flowHead(t('confirm_title'), 'toScan')}
       <div class="confirm">
         <div>
           ${S.msg ? `<p class="warn">${esc(S.msg)}</p>` : ''}
           <div class="field"><label for="nameF">${t('name_label')}</label><input id="nameF" data-in="name" value="${esc(r.nameEn)}" autocomplete="off"></div>
           <div class="field"><label for="idn">${t('id_label')}</label><input id="idn" data-in="idn" inputmode="numeric" value="${esc(fmtId(r.idn))}" autocomplete="off"></div>
           <div class="field"><label for="phoneF">${t('phone_label')}</label><input id="phoneF" data-in="phone" type="tel" inputmode="tel" placeholder="05X XXX XXXX" value="${esc(r.phone || '')}" autocomplete="off"></div>
-          <p class="privacy">${t('privacy')} Kept for ${db.settings.retention} days, then erased.</p>
+          <p class="privacy">${t('privacy')} ${t('kept_for', { n: num(db.settings.retention) })}</p>
         </div>
         <div class="summary">
-          <span class="tag ${S.type}">${del ? t('tile_delivery') : t('tile_visitor')}</span>
+          <span class="tag ${S.type}">${typeLabel(S.type)}</span>
           <div class="where disp">${where}</div>
-          <p style="margin:0 0 20px;color:var(--muted)">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          <p style="margin:0 0 20px;color:var(--muted)">${fmtTime(Date.now())}</p>
           <button class="btn primary big" style="width:100%" data-act="save" ${S.saving ? 'disabled' : ''}>${S.saving ? t('saving') : (needsApproval() ? t('save_ask') : t('save_entry'))}</button>
         </div>
       </div></div>`;
   },
 
   vehicle() {
-    const del = S.type === 'delivery';
-    const where = del ? esc(S.company) + (S.villa ? ' → Villa ' + esc(villaKey(S.cluster, S.section, S.villa)) : '') : `Villa ${esc(villaKey(S.cluster, S.section, S.villa))}` + (S.company ? ' · ' + esc(S.company) : '');
+    const where = whereNow();
     const emirates = ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'RAK', 'Fujairah', 'UAQ'];
-    return `<div class="screen">${topbar()}${stepper(3, totalSteps())}${flowHead(t('vehicle_title'), 'toScan')}
+    return `<div class="screen">${topbar()}${stepper(3 - skipN(), totalSteps())}${flowHead(t('vehicle_title'), 'toScan')}
       <p class="hint">${t('vehicle_hint')}</p>
       <div class="confirm">
         <div>
           ${S.msg ? `<p class="warn">${esc(S.msg)}</p>` : ''}
-          <div class="scanrow" style="margin-top:0">
-            <button class="btn ${S.vCam ? 'primary' : ''}" data-act="vcam" data-arg="1">${t('use_camera')}</button>
-            <button class="btn ${!S.vCam ? 'primary' : ''}" data-act="vcam" data-arg="0">${t('type_manually')}</button>
-          </div>
           ${S.vCam ? (S.vPhoto ? `
             <div class="cam" style="margin:14px 0;background:#000"><img src="${S.vPhoto}" style="width:100%;height:100%;object-fit:cover;display:block"></div>
             <div class="scanrow" style="margin-top:10px"><button class="btn big" style="width:100%" data-act="vretake">${t('retake')}</button></div>
@@ -551,20 +689,19 @@ const VIEWS = {
               <div class="camMsg" id="vcamMsg" hidden>${t('camera_unavailable')}</div></div>
             <div class="scanrow" style="margin-top:10px"><button class="btn primary big" style="width:100%" data-act="vcapture">${t('capture')}</button></div>
           `) + `<p class="small" style="margin:14px 0">${t('camera_helper')}</p>` : ''}
-          <div class="field"><label for="vcolor">${t('car_color')}</label><input id="vcolor" data-in="vcolor" value="${esc(S.vRec.color)}" autocomplete="off"></div>
+          <div class="field"><label for="vcolor">${t('car_color')}</label><input id="vcolor" data-in="vcolor" placeholder="${t('color_ph')}" value="${esc(S.vRec.color)}" autocomplete="off"></div>
           <p class="label">${t('plate_number')}</p>
-          <div class="platerow">
-            <select data-in="vemirate">${emirates.map(e => `<option ${S.vRec.emirate === e ? 'selected' : ''}>${e}</option>`).join('')}</select>
+          <div class="platerow" dir="ltr">
+            <select data-in="vemirate">${emirates.map(e => `<option value="${e}" ${S.vRec.emirate === e ? 'selected' : ''}>${esc(lbl(e))}</option>`).join('')}</select>
             <input id="vcode" data-in="vcode" placeholder="H" maxlength="3" value="${esc(S.vRec.code)}" autocomplete="off">
-            <input id="vnumber" data-in="vnumber" placeholder="64942" inputmode="numeric" value="${esc(S.vRec.number)}" autocomplete="off">
+            <input id="vnumber" data-in="vnumber" placeholder="${num('64942')}" inputmode="numeric" value="${esc(num(S.vRec.number))}" autocomplete="off">
           </div>
-          <p class="small" style="margin:6px 0 16px">${esc(S.vRec.emirate)} ${esc(S.vRec.code)}${esc(S.vRec.number)}</p>
-          <button class="btn" data-act="toScanFromVehicle">${t('back_to_id')}</button>
+          <button class="btn" style="margin-top:16px" data-act="toScanFromVehicle">${t('back_to_id')}</button>
         </div>
         <div class="summary">
-          <span class="tag ${S.type}">${del ? t('tile_delivery') : t('tile_visitor')}</span>
+          <span class="tag ${S.type}">${typeLabel(S.type)}</span>
           <div class="where disp">${where}</div>
-          <p style="margin:0 0 20px;color:var(--muted)">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+          <p style="margin:0 0 20px;color:var(--muted)">${fmtTime(Date.now())}</p>
           <button class="btn primary big" style="width:100%" data-act="savevehicle" ${S.saving ? 'disabled' : ''}>${S.saving ? t('saving') : t('save_entry')}</button>
         </div>
       </div></div>`;
@@ -574,24 +711,25 @@ const VIEWS = {
     const key = villaKey(S.cluster, S.section, S.villa), phone = normPhone(db.settings.directory[key] || '');
     const name = S.rec.nameEn || 'A visitor';
     const msg = `Gate: ${name} is at the gate for Villa ${key}. Reply YES to let them in or NO to refuse.`;
-    return `<div class="screen">${topbar()}${stepper(5, totalSteps())}${flowHead('Ask the resident', 'toConfirm')}
+    return `<div class="screen">${topbar()}${stepper(5 - skipN(), totalSteps())}${flowHead(t('ask_resident'), 'toConfirm')}
       <div class="summary" style="max-width:560px;margin-bottom:22px"><span class="tag visitor">${t('tile_visitor')}</span>
-        <div class="where disp">Villa ${esc(key)}</div><p style="margin:0;color:var(--muted)">${esc(name)}</p></div>
+        <div class="where disp">${esc(villaText(key))}</div><p style="margin:0;color:var(--muted)">${esc(S.rec.nameEn || t('a_visitor'))}</p></div>
+      ${S.msg ? `<p class="warn">${esc(S.msg)}</p>` : ''}
       ${phone ? `<div class="scanrow"><a class="btn big" href="https://wa.me/${phone}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">WhatsApp</a>
-        <a class="btn big" href="tel:+${phone}">Call</a></div>`
-        : `<p class="warn">No phone number saved for Villa ${esc(key)}.</p>`}
-      <p class="label" style="margin-top:22px">What did the resident say?</p>
+        <a class="btn big" href="tel:+${phone}">${t('call')}</a></div>`
+        : `<p class="warn">${esc(t('no_phone_villa', { v: num(key) }))}</p>`}
+      <p class="label" style="margin-top:22px">${t('resident_said')}</p>
       <div class="result">
-        <button class="btn yes" data-act="result" data-arg="approved" ${S.saving ? 'disabled' : ''}>Yes, let them in</button>
-        <button class="btn no" data-act="result" data-arg="denied" ${S.saving ? 'disabled' : ''}>No, refuse entry</button>
-        <button class="btn" data-act="result" data-arg="no_answer" ${S.saving ? 'disabled' : ''}>No answer</button>
+        <button class="btn yes" data-act="result" data-arg="approved" ${S.saving ? 'disabled' : ''}>${t('yes_in')}</button>
+        <button class="btn no" data-act="result" data-arg="denied" ${S.saving ? 'disabled' : ''}>${t('no_refuse')}</button>
+        <button class="btn" data-act="result" data-arg="no_answer" ${S.saving ? 'disabled' : ''}>${t('no_answer')}</button>
       </div></div>`;
   },
 
   done() {
     const last = db.events[db.events.length - 1] || {};
     const denied = last.approval === 'denied';
-    const where = last.type === 'delivery' ? last.company : `Villa ${villaKey(last.cluster, last.section, last.villa)}` + (last.company ? ' · ' + last.company : '');
+    const where = last.type === 'delivery' ? lbl(last.company) : villaText(villaKey(last.cluster, last.section, last.villa));
     return `<div class="screen">${topbar()}<div class="done ${denied ? 'denied' : ''}">
       <div class="ring">${denied ? I.cross : I.check}</div><h2 class="disp">${denied ? t('refused') : t('recorded')}</h2><p>${esc(where)}</p>
       <div class="countdown"><i></i></div>
@@ -600,9 +738,9 @@ const VIEWS = {
 
   pin() {
     return `<div class="screen">${topbar(false)}<div class="pinwrap">
-      <div class="head"><h2 class="disp">${t('pin_title')}</h2></div>
+      <div class="head"><h2 class="disp">${t('pin_title')}</h2><button class="btn" data-act="home">${t('cancel')}</button></div>
       <div class="dots">${[0,1,2,3].map(i => `<i class="${i < S.pin.length ? 'on' : ''}"></i>`).join('')}</div>
-      ${S.pinErr ? '<p class="warn" style="text-align:center">Wrong PIN.</p>' : ''}
+      ${S.pinErr ? `<p class="warn" style="text-align:center">${t('wrong_pin')}</p>` : ''}
       ${keypad('pin')}</div></div>`;
   },
 
@@ -610,14 +748,14 @@ const VIEWS = {
     const all = insideList(), list = all.filter(e => S.inTab === 'all' || e.type === S.inTab);
     const tab = (k, l) => `<button data-act="intab" data-arg="${k}" aria-pressed="${S.inTab === k}">${l}</button>`;
     const rows = list.map(e => {
-      const long = overstay(e), who = e.nameEn || (e.idn ? 'ID ending ' + e.idn.slice(-4) : (e.carColor || e.plate) ? [e.carColor, e.plate].filter(Boolean).join(' · ') : 'Unknown');
+      const long = overstay(e), who = e.nameEn || (e.idn ? t('id_ending') + ' ' + num(e.idn.slice(-4)) : (e.carColor || e.plate) ? [e.carColor, num(e.plate)].filter(Boolean).join(' · ') : t('unknown'));
       return `<div class="inrow ${long ? 'over' : ''}"><div><div class="who">${esc(who)}</div>
-        <div class="meta">${e.type === 'delivery' ? t('tile_delivery') : t('tile_visitor')}, ${esc(whereOf(e))}. ${new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}, ${fmtDur(Date.now() - e.ts)} ${long ? '<span class="flag">Over limit</span>' : ''}</div></div>
-        <button class="btn out" data-act="out" data-arg="${esc(e.id)}">Out</button></div>`;
+        <div class="meta">${typeLabel(e.type)}, ${esc(whereOf(e))}. ${fmtTime(e.ts)}, ${fmtDur(Date.now() - e.ts)} ${long ? `<span class="flag">${t('over_limit')}</span>` : ''}</div></div>
+        <button class="btn out" data-act="out" data-arg="${esc(e.id)}">${t('out')}</button></div>`;
     }).join('');
-    return `<div class="screen">${topbar()}${flowHead(t('leaving'), '', 'Close')}
-      <div class="seg" style="margin-bottom:16px">${tab('all', 'Everyone (' + all.length + ')')}${tab('visitor', t('tile_visitor'))}${tab('delivery', t('tile_delivery'))}</div>
-      <div class="inlist">${rows || `<p class="empty">${(S.inTab !== 'visitor' && !db.settings.trackDeliveryExit) ? 'Nobody is marked as inside. Deliveries only show up here once "Track when deliveries leave" is turned on in Manager settings.' : 'Nobody is marked as inside.'}</p>`}</div></div>`;
+    return `<div class="screen">${topbar()}${flowHead(t('leaving'), '', t('close'))}
+      <div class="seg" style="margin-bottom:16px">${tab('all', t('everyone') + ' (' + num(all.length) + ')')}${tab('visitor', t('tile_visitor'))}${tab('service', t('tile_service'))}${tab('delivery', t('tile_delivery'))}</div>
+      <div class="inlist">${rows || `<p class="empty">${((S.inTab === 'delivery' || S.inTab === 'all') && !db.settings.trackDeliveryExit) ? t('nobody_inside_delivery') : t('nobody_inside')}</p>`}</div></div>`;
   },
 
   dash() { return dashView(); }
@@ -629,16 +767,19 @@ const villaKey = (cluster, sec, v) => {
   return cluster ? cluster + (base ? ' ' + base : '') : base;
 };
 function normPhone(p) { let d = String(p || '').replace(/\D/g, ''); if (/^00/.test(d)) d = d.slice(2); else if (/^0\d{9}$/.test(d)) d = '971' + d.slice(1); return d; }
-function fmtDur(ms) { const m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return m + ' min'; return Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; }
-function isInside(e) { if (e.demo || e.outAt || e.approval === 'denied') return false; if (e.type === 'delivery' && !db.settings.trackDeliveryExit) return false; return Date.now() - e.ts < db.settings.assumeLeftHours * 3600e3; }
+function fmtDur(ms) { const m = Math.max(1, Math.round(ms / 60000)); if (m < 60) return num(m) + ' ' + t('min'); return num(Math.floor(m / 60)) + ' ' + t('hr') + ' ' + num(m % 60) + ' ' + t('min'); }
+function isInside(e) { if (e.outAt || e.approval === 'denied') return false; if (e.type === 'delivery' && !db.settings.trackDeliveryExit) return false; return Date.now() - e.ts < db.settings.assumeLeftHours * 3600e3; }
 function insideList() { return db.events.filter(isInside).sort((a, b) => a.ts - b.ts); }
 function overstay(e) { return e.type === 'delivery' && Date.now() - e.ts > db.settings.overstayMin * 60000; }
-function leftCell(e) { if (e.approval === 'denied') return 'Refused'; if (e.outAt) return new Date(e.outAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); return isInside(e) ? '<b>Inside</b>' : '–'; }
-function approvalLabel(e) { return ({ approved: 'Approved', denied: 'Refused', no_answer: 'No answer' })[e.approval] || '–'; }
+function leftCell(e) { if (e.approval === 'denied') return esc(t('refused')); if (e.outAt) return esc(fmtTime(e.outAt)); return isInside(e) ? '<b>' + esc(t('left_inside')) + '</b>' : '–'; }
+function approvalLabel(e) { return esc(({ approved: t('approved_label'), denied: t('refused'), no_answer: t('no_answer') })[e.approval] || '–'); }
 function fmtId(d) { d = String(d || ''); return /^\d{15}$/.test(d) ? `${d.slice(0,3)}-${d.slice(3,7)}-${d.slice(7,14)}-${d.slice(14)}` : d; }
 function maskId(d) { return d && d.length >= 4 ? '•••• ' + d.slice(-4) : ''; }
 const hlab = x => { x = ((x % 24) + 24) % 24; return (x % 12 || 12) + (x < 12 ? ' am' : ' pm'); };
-function whereOf(e) { if (e.type === 'delivery') return (e.company || 'Delivery') + (e.villa ? ' → Villa ' + villaKey(e.cluster, e.section, e.villa) : ''); return `Villa ${villaKey(e.cluster, e.section, e.villa)}` + (e.company ? ' · ' + e.company : ''); }
+function whereOf(e) { if (e.type === 'delivery') return (e.company ? lbl(e.company) : t('tile_delivery')) + (e.villa ? arrow() + villaText(villaKey(e.cluster, e.section, e.villa)) : ''); return villaText(villaKey(e.cluster, e.section, e.villa)) + (e.company ? ' · ' + lbl(e.company) : ''); }
+// Where the current entry is going, already escaped for HTML.
+function whereNow() { return esc(whereOf({ type: S.type, company: S.company, cluster: S.cluster, section: S.section, villa: S.villa })); }
+// (service entries use the same "Villa X · Service" format)
 const isPremium = () => db.settings.plan === 'premium';
 function recents() {
   if (!isPremium()) return [];
@@ -646,7 +787,7 @@ function recents() {
   for (const e of db.events.slice().sort((a, b) => b.ts - a.ts)) {
     if (e.anon || !e.idn || e.type !== S.type) continue;
     if (S.type === 'delivery' && e.company !== S.company) continue;
-    if (S.type === 'visitor' && (e.cluster !== S.cluster || e.section !== S.section || e.villa !== S.villa)) continue;
+    if (S.type !== 'delivery' && (e.cluster !== S.cluster || e.section !== S.section || e.villa !== S.villa)) continue;
     if (seen.has(e.idn)) continue;
     seen.add(e.idn); out.push(e);
     if (out.length >= 6) break;
@@ -656,18 +797,42 @@ function recents() {
 function recentHtml() {
   const r = recents(); if (!r.length) return '';
   return `<div class="recentbox"><p class="label">${S.type === 'delivery' ? t('been_before_delivery') : t('been_before_visitor')}</p>
-    <div class="chips" style="gap:11px">${r.map(e => `<button class="rec" data-act="again" data-arg="${esc(e.id)}"><b>${esc(e.nameEn || 'No name')}</b><span>ID ending ${esc(e.idn.slice(-4))}</span></button>`).join('')}</div></div>`;
+    <div class="chips" style="gap:11px">${r.map(e => `<button class="rec" data-act="again" data-arg="${esc(e.id)}"><b>${esc(e.nameEn || t('no_name'))}</b><span>${t('id_ending')} ${esc(num(e.idn.slice(-4)))}</span></button>`).join('')}</div></div>`;
 }
 
 /* ---------- camera ---------- */
+let camToken = 0;
 async function startCam(videoId) {
   stopCam();
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
-    const v = document.getElementById(videoId || 'cam'); if (v) v.srcObject = stream;
-  } catch (e) { const m = $((videoId === 'vcamvideo' ? '#vcamMsg' : '#camMsg')); if (m) m.hidden = false; }
+  const token = ++camToken;
+  const showMsg = on => { const m = $(videoId === 'vcamvideo' ? '#vcamMsg' : '#camMsg'); if (m) m.hidden = !on; };
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showMsg(true); return; }
+  // Try the best quality first, then fall back so a fussy camera still works.
+  const tries = [
+    { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false },
+    { video: { facingMode: { ideal: 'environment' } }, audio: false },
+    { video: true, audio: false }
+  ];
+  let s = null;
+  for (const c of tries) {
+    try { s = await navigator.mediaDevices.getUserMedia(c); break; }
+    catch (e) { if (e && e.name === 'NotAllowedError') break; }
+  }
+  if (token !== camToken) { if (s) s.getTracks().forEach(x => x.stop()); return; } // user already left this screen
+  if (!s) { showMsg(true); return; }
+  stream = s;
+  const v = document.getElementById(videoId || 'cam');
+  if (v) { v.srcObject = s; v.play().catch(() => {}); }
+  showMsg(false);
 }
-function stopCam() { if (stream) { stream.getTracks().forEach(x => x.stop()); stream = null; } }
+function stopCam() { camToken++; if (stream) { stream.getTracks().forEach(x => x.stop()); stream = null; } }
+async function snapCard() {
+  const v = $('#cam');
+  // If the picture is still warming up, give it a moment instead of complaining.
+  if (v && !v.videoWidth && stream) { for (let i = 0; i < 20 && !v.videoWidth; i++) await new Promise(r => setTimeout(r, 100)); }
+  if (!v || !v.videoWidth) { note(t('camera_unavailable'), true); return; }
+  readCard(v, v.videoWidth, v.videoHeight);
+}
 
 /* ---------- reading the card ---------- */
 function prep(src, w, h, crop) {
@@ -741,7 +906,7 @@ function parseFront(text) {
 }
 function merge(r) {
   const w = [], d = (r.idn || '').replace(/\D/g, '');
-  if (d) { if (S.rec.idn && S.rec.idn !== d) w.push('The ID number is different from an earlier scan.'); else S.rec.idn = d; }
+  if (d) { if (S.rec.idn && S.rec.idn !== d) w.push(t('id_diff')); else S.rec.idn = d; }
   if (r.nameEn && !S.rec.nameEn) S.rec.nameEn = r.nameEn;
   return w;
 }
@@ -782,9 +947,12 @@ async function readCard(el, w, h) {
 function needsApproval() { return S.type === 'visitor' && isPremium() && db.settings.approval; }
 function validRec() {
   const r = S.rec;
-  if (!r.nameEn.trim() && !r.nameAr.trim() && !r.idn.trim()) { S.msg = 'Enter a name or an ID number first.'; render(); return false; }
+  if (!r.nameEn.trim() && !r.nameAr.trim() && !r.idn.trim()) { S.msg = t('need_name_id'); render(); return false; }
+  if ((r.phone || '').replace(/\D/g, '').length < 7) { S.msg = t('phone_required'); render(); return false; }
   return true;
 }
+// Show the real reason a save failed, so it can be fixed instead of guessed at.
+function saveErr(error) { return t('save_failed') + ' ' + ((error && (error.message || error.details || error.hint)) || t('conn_error')); }
 async function saveEntry(approval) {
   if (!validRec() || S.saving) return;
   const r = S.rec, denied = approval === 'denied';
@@ -799,7 +967,7 @@ async function saveEntry(approval) {
   S.saving = true; render();
   const { data, error } = await sb.from('entries').insert(row).select().single();
   S.saving = false;
-  if (error) { S.msg = 'Could not save — check the connection and try again.'; render(); return; }
+  if (error) { S.msg = saveErr(error); render(); return; }
   if (!db.events.find(e => e.id === data.id)) db.events.push(rowToEvent(data));
   go('done');
 }
@@ -823,7 +991,7 @@ function dataURLtoBlob(dataURL) {
 async function saveVehicle() {
   const c = S.vRec.color.trim(), codeNum = (S.vRec.code.trim() + S.vRec.number.trim()).trim();
   const p = codeNum ? `${S.vRec.emirate} ${codeNum}` : '';
-  if (!c && !p) { S.msg = 'Enter the car color, or the plate code and number.'; render(); return; }
+  if (!c && !p) { S.msg = t('need_vehicle'); render(); return; }
   if (S.saving) return;
   const row = {
     gate_id: GATE_ID, type: S.type, company: S.company || '', cluster: S.cluster, section: S.section, villa: S.villa,
@@ -831,7 +999,7 @@ async function saveVehicle() {
   };
   S.saving = true; render();
   const { data, error } = await sb.from('entries').insert(row).select().single();
-  if (error) { S.saving = false; S.msg = 'Could not save — check the connection and try again.'; render(); return; }
+  if (error) { S.saving = false; S.msg = saveErr(error); render(); if (!S.vPhoto) startCam('vcamvideo'); return; }
   if (S.vPhoto) {
     try {
       const path = `${GATE_ID}/${data.id}.jpg`;
@@ -847,19 +1015,19 @@ async function saveVehicle() {
 /* ---------- actions ---------- */
 function act(a, arg) {
   switch (a) {
-    case 'start': S.type = arg; S.rec = { nameEn: '', nameAr: '', idn: '', phone: '' }; S.company = ''; S.cluster = ''; S.section = ''; S.villa = ''; S.msg = ''; S.vehicleMode = false; go('company'); break;
+    case 'start': S.type = arg; S.rec = { nameEn: '', nameAr: '', idn: '', phone: '' }; S.company = ''; S.cluster = ''; S.section = ''; S.villa = ''; S.msg = ''; S.vehicleMode = false; go(arg === 'visitor' ? 'villa' : 'company'); break;
     case 'company': S.company = arg; go('villa'); break;
-    case 'cluster': S.cluster = S.cluster === arg ? '' : arg; render(); break;
-    case 'section': S.section = S.section === arg ? '' : arg; render(); break;
+    case 'cluster': S.cluster = S.cluster === arg ? '' : arg; refreshVilla(); break;
+    case 'section': S.section = S.section === arg ? '' : arg; refreshVilla(); break;
     case 'key': key(arg); break;
     case 'next': go('scan'); break;
-    case 'snap': { const v = $('#cam'); if (!v || !v.videoWidth) { note(t('camera_unavailable'), true); break; } readCard(v, v.videoWidth, v.videoHeight); break; }
+    case 'snap': snapCard(); break;
     case 'typeit': S.msg = ''; go('confirm'); break;
-    case 'toCompany': go('company'); break;
+    case 'toCompany': go(S.type === 'visitor' ? 'home' : 'company'); break;
     case 'toVilla': go('villa'); break;
     case 'toScan': go('scan'); break;
     case 'toConfirm': S.msg = ''; go('confirm'); break;
-    case 'vehiclemode': S.vehicleMode = true; S.vRec = { color: '', emirate: 'Dubai', code: '', number: '' }; S.vCam = false; S.vPhoto = null; S.msg = ''; go('vehicle'); break;
+    case 'vehiclemode': S.vehicleMode = true; S.vRec = { color: '', emirate: 'Dubai', code: '', number: '' }; S.vCam = true; S.vPhoto = null; S.msg = ''; go('vehicle'); startCam('vcamvideo'); break;
     case 'toScanFromVehicle': S.vehicleMode = false; stopCam(); go('scan'); break;
     case 'vcam': {
       const on = arg === '1';
@@ -877,7 +1045,7 @@ function act(a, arg) {
     case 'inside': S.inTab = 'all'; go('inside'); break;
     case 'intab': S.inTab = arg; render(); break;
     case 'out': doOut(arg); break;
-    case 'home': go('dash'); break;
+    case 'home': go('home'); break;
     case 'dismisstip': S.showTip = false; try { localStorage.setItem('gateone_tip_seen', '1'); } catch (e) {} render(); break;
     case 'manager': S.pin = ''; S.pinErr = false; go('pin'); break;
     case 'langopen': S.langOpen = !S.langOpen; render(); break;
@@ -889,13 +1057,26 @@ function act(a, arg) {
     case 'csv': exportCsv(); break;
     case 'pair': doPair(); break;
     case 'retryboot': boot(); break;
+    case 'lock': S.pin = ''; S.pinErr = false; go('pin'); break;
   }
+}
+function villaReady() {
+  const c = db.settings.clusters, s = db.settings.sections;
+  return !!((!c.length || S.cluster) && (!s.length || S.section) && S.villa);
+}
+// Update the villa screen in place (no full redraw), so nothing flickers or jumps.
+function refreshVilla() {
+  const d = $('.display'); if (d) d.textContent = num(S.villa) || '–';
+  document.querySelectorAll('[data-act="cluster"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.arg === S.cluster)));
+  document.querySelectorAll('[data-act="section"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.arg === S.section)));
+  const n = document.querySelector('[data-act="next"]'); if (n) n.disabled = !villaReady();
 }
 function key(spec) {
   const [target, k] = spec.split(':');
   if (target === 'villa') {
     if (k === 'clear') S.villa = ''; else if (k === 'del') S.villa = S.villa.slice(0, -1); else if (S.villa.length < 4) S.villa += k;
-    render();
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) {}
+    refreshVilla();
   } else if (target === 'pin') {
     if (k === 'clear') S.pin = ''; else if (k === 'del') S.pin = S.pin.slice(0, -1); else if (S.pin.length < 4) S.pin += k;
     S.pinErr = false;
@@ -909,17 +1090,17 @@ async function doPair() {
   S.pairErr = ''; S.saving = true; render();
   const { data, error } = await sb.rpc('pair_device', { pairing_code: code, device_label: 'Gate tablet' });
   S.saving = false;
-  if (error) { S.pairErr = error.message.includes('Invalid') ? 'That code is wrong or has expired.' : 'Could not connect. Try again.'; render(); return; }
+  if (error) { S.pairErr = error.message.includes('Invalid') ? t('pair_wrong') : t('conn_error'); render(); return; }
   GATE_ID = data;
   try { await loadGate(); subscribeRealtime(); go('home'); }
   catch (e) { S.connErr = t('conn_error'); go('connerror'); }
 }
 async function doOut(id) {
   const e = db.events.find(x => x.id === id); if (!e) return;
-  if (e.photoPath && !confirm('Are you sure? Marking this visitor as left also permanently deletes their vehicle photo.')) return;
+  if (e.photoPath && !confirm(t('out_photo_confirm'))) return;
   const prev = e.outAt; e.outAt = Date.now(); render();
   const { error } = await sb.from('entries').update({ out_at: new Date(e.outAt).toISOString() }).eq('id', id);
-  if (error) { e.outAt = prev; render(); alert('Could not save — try again.'); return; }
+  if (error) { e.outAt = prev; render(); alert(t('save_failed_short')); return; }
   if (e.photoPath) {
     const path = e.photoPath;
     e.photoPath = null; // clear locally right away either way; the photo's only purpose was "while they're still here"
@@ -928,19 +1109,19 @@ async function doOut(id) {
   }
 }
 async function doPurge() {
-  if (!confirm('Are you sure? This permanently erases names, ID numbers and phone numbers for every entry older than the retention period. It cannot be undone.')) return;
+  if (!confirm(t('purge_confirm'))) return;
   const { error } = await sb.rpc('purge_expired_entries');
-  if (error) { alert('Could not run the erase job. Try again.'); return; }
+  if (error) { alert(t('purge_fail')); return; }
   await loadGate(); render();
-  alert('Old details erased where the retention period had passed.');
+  alert(t('purge_done'));
 }
 async function doPlanToggle() {
-  const code = prompt('Gatesone owner code'); if (code === null) return;
-  if (code !== 'gateone-2026') { alert('Wrong code.'); return; }
+  const code = prompt(t('owner_code_prompt')); if (code === null) return;
+  if (code !== 'gateone-2026') { alert(t('wrong_code')); return; }
   const next = isPremium() ? 'basic' : 'premium';
   const patch = { plan: next }; if (next === 'basic') patch.approval_enabled = false;
   const { error } = await sb.from('gates').update(patch).eq('id', GATE_ID);
-  if (error) { alert('Could not update the plan.'); return; }
+  if (error) { alert(t('plan_fail')); return; }
   db.settings.plan = next; if (next === 'basic') db.settings.approval = false;
   render();
 }
@@ -949,33 +1130,33 @@ async function setSetting(k, v) {
   let val = v;
   if (k === 'retention') {
     const n = Math.min(365, Math.max(1, Math.round(+v) || 14));
-    if (n > 14 && n > s.retention && !confirm('Keeping names, ID numbers and phone numbers longer than 14 days means you are responsible for protecting them. Continue?')) { render(); return; }
-    if (n < s.retention && !confirm('Are you sure? Shortening the retention period means older names, ID numbers and phone numbers will be erased sooner, and that cannot be undone.')) { render(); return; }
+    if (n > 14 && n > s.retention && !confirm(t('retention_longer_confirm'))) { render(); return; }
+    if (n < s.retention && !confirm(t('retention_shorter_confirm'))) { render(); return; }
     val = n;
-  } else if (k === 'pin') { if (!/^\d{4}$/.test(v)) { alert('The PIN must be exactly 4 digits.'); return; } }
+  } else if (k === 'pin') { if (!/^\d{4}$/.test(v)) { alert(t('pin_must_4')); return; } }
   else if (k === 'companies' || k === 'sections' || k === 'clusters') { val = v.split(',').map(x => x.trim()).filter(Boolean); }
   else if (k === 'trackDeliveryExit') { val = v === 'on'; }
   else if (k === 'approval') { val = isPremium() && v === 'on'; }
   else if (k === 'overstayMin') { val = Math.max(5, +v || 60); }
   else if (k === 'assumeLeftHours') { val = Math.max(1, +v || 12); }
   else if (k === 'directory') { const m = {}; v.split('\n').forEach(l => { const p = l.split(/[,\t]/); if (p.length < 2) return; const key = p[0].trim().toUpperCase().replace(/\s+/g, ''), ph = p.slice(1).join('').trim(); if (key && ph) m[key] = ph; }); val = m; }
-  else if (k === 'community') { val = v.trim() || 'Main Gate'; }
+  else if (k === 'community') { val = v.trim() || t('default_gate_name'); }
   const patch = {}; patch[col] = val;
   const { error } = await sb.from('gates').update(patch).eq('id', GATE_ID);
-  if (error) { alert('Could not save that setting — check the connection.'); return; }
+  if (error) { alert(t('setting_fail')); return; }
   s[k] = val; render();
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled) act(b.dataset.act, b.dataset.arg); else if (S.langOpen && !e.target.closest('.langmenu')) { S.langOpen = false; render(); } });
 document.addEventListener('input', e => {
   const i = e.target.closest('[data-in]'); if (!i) return;
-  if (i.dataset.in === 'idn') S.rec.idn = i.value.replace(/[^0-9A-Za-z]/g, '');
+  if (i.dataset.in === 'idn') S.rec.idn = toWestern(i.value).replace(/[^0-9A-Za-z]/g, '');
   else if (i.dataset.in === 'name') S.rec.nameEn = i.value;
-  else if (i.dataset.in === 'phone') S.rec.phone = i.value.replace(/[^0-9+ ]/g, '');
+  else if (i.dataset.in === 'phone') S.rec.phone = toWestern(i.value).replace(/[^0-9+ ]/g, '');
   else if (i.dataset.in === 'paircode') S.pairCode = i.value;
   else if (i.dataset.in === 'vcolor') S.vRec.color = i.value;
   else if (i.dataset.in === 'vemirate') S.vRec.emirate = i.value;
   else if (i.dataset.in === 'vcode') S.vRec.code = i.value.toUpperCase();
-  else if (i.dataset.in === 'vnumber') S.vRec.number = i.value.replace(/\D/g, '');
+  else if (i.dataset.in === 'vnumber') S.vRec.number = toWestern(i.value).replace(/\D/g, '');
 });
 document.addEventListener('change', e => { const s = e.target.closest('[data-set]'); if (s) setSetting(s.dataset.set, s.value); });
 
@@ -997,80 +1178,82 @@ function dashView() {
   const perDay = n => (n / S.range).toFixed(n / S.range >= 10 ? 0 : 1);
 
   return `<div class="screen"><div class="dash">
-    <header class="top"><span class="brand">${esc(s.community)} dashboard</span></header>
+    <header class="top"><span class="brand">${esc(s.community)} ${t('dash_suffix')}</span>
+      <button class="btn" data-act="lock">${t('lock_dashboard')}</button></header>
 
-    <p class="strip"><span class="dot live"></span>Live — synced across every tablet at this gate.</p>
+    <p class="strip"><span class="dot live"></span>${t('live_sync')}</p>
 
     <div class="seg" style="margin-bottom:4px">
-      ${[[1, 'Today'], [7, '7 days'], [30, '30 days']].map(([n, l]) => `<button data-act="range" data-arg="${n}" aria-pressed="${S.range === n}">${l}</button>`).join('')}
+      ${[[1, t('range_today')], [7, t('range_7')], [30, t('range_30')]].map(([n, l]) => `<button data-act="range" data-arg="${n}" aria-pressed="${S.range === n}">${l}</button>`).join('')}
     </div>
 
     <div class="kpis">
-      <div class="kpi"><b>${vis.length}</b><span>Visitors, ${perDay(vis.length)}/day${refused ? ', ' + refused + ' refused' : ''}</span></div>
-      <div class="kpi"><b>${del.length}</b><span>Deliveries, ${perDay(del.length)}/day</span></div>
-      <div class="kpi"><b>${busyH >= 0 ? hlab(busyH) : '–'}</b><span>Busiest hour${busyH >= 0 ? ` (${maxH})` : ''}</span></div>
-      <div class="kpi"><b>${cos[0] ? esc(cos[0][0]) : '–'}</b><span>Top delivery company</span></div>
+      <div class="kpi"><b>${num(vis.length)}</b><span>${t('tile_visitor')}, ${num(perDay(vis.length))}${t('per_day')}${refused ? ', ' + num(refused) + ' ' + t('refused_suffix') : ''}</span></div>
+      <div class="kpi"><b>${num(del.length)}</b><span>${t('tile_delivery')}, ${num(perDay(del.length))}${t('per_day')}</span></div>
+      <div class="kpi"><b>${num(ev.filter(e => e.type === 'service').length)}</b><span>${t('tile_service')}, ${num(perDay(ev.filter(e => e.type === 'service').length))}${t('per_day')}</span></div>
+      <div class="kpi"><b>${busyH >= 0 ? hlab(busyH) : '–'}</b><span>${t('busiest_hour')}${busyH >= 0 ? ` (${num(maxH)})` : ''}</span></div>
+      <div class="kpi"><b>${cos[0] ? esc(lbl(cos[0][0])) : '–'}</b><span>${t('top_delivery_company')}</span></div>
     </div>
 
-    <p class="strip">Inside right now: <b>${ins.length}</b>${overN ? `, <b style="color:var(--gold)">${overN} over the time limit</b>` : ''}${avgStay ? `. Average visitor stay: <b>${fmtDur(avgStay)}</b>` : ''}</p>
+    <p class="strip">${t('inside_now')} <b>${num(ins.length)}</b>${overN ? `, <b style="color:var(--gold)">${num(overN)} ${t('over_time_limit')}</b>` : ''}${avgStay ? `. ${t('avg_visitor_stay')} <b>${fmtDur(avgStay)}</b>` : ''}</p>
 
     <div class="two">
-      <div class="panel"><h3>Traffic by hour</h3>
-        <div class="legend"><span><i style="background:var(--gold)"></i>Deliveries</span><span><i style="background:var(--teal)"></i>Visitors</span></div>
-        ${ev.length ? hourChart(ev) : '<p class="empty">No entries in this period yet.</p>'}</div>
-      <div class="panel"><h3>Deliveries by company</h3>
-        ${cos.length ? cos.map(([n, c]) => `<div class="bar"><span>${esc(n)}</span><div><i style="width:${c / cos[0][1] * 100}%"></i></div><b>${c}</b></div>`).join('') : '<p class="empty">No deliveries in this period yet.</p>'}</div>
+      <div class="panel"><h3>${t('traffic_by_hour')}</h3>
+        <div class="legend"><span><i style="background:var(--gold)"></i>${t('tile_delivery')}</span><span><i style="background:var(--teal-l)"></i>${t('tile_service')}</span><span><i style="background:var(--teal)"></i>${t('tile_visitor')}</span></div>
+        ${ev.length ? hourChart(ev) : `<p class="empty">${t('no_entries_period')}</p>`}</div>
+      <div class="panel"><h3>${t('deliveries_by_company')}</h3>
+        ${cos.length ? cos.map(([n, c]) => `<div class="bar"><span>${esc(lbl(n))}</span><div><i style="width:${c / cos[0][1] * 100}%"></i></div><b>${num(c)}</b></div>`).join('') : `<p class="empty">${t('no_deliveries_period')}</p>`}</div>
     </div>
 
-    <div class="panel"><h3>Latest entries</h3>
-      ${ev.length ? `<div class="tablewrap"><table><thead><tr><th>Time</th><th>Type</th><th>Company / villa</th><th>Name</th><th>ID</th><th>Left</th>${isPremium() ? '<th>Resident</th>' : ''}</tr></thead><tbody>
+    <div class="panel"><h3>${t('latest_entries')}</h3>
+      ${ev.length ? `<div class="tablewrap"><table><thead><tr><th>${t('th_time')}</th><th>${t('th_type')}</th><th>${t('th_company_villa')}</th><th>${t('th_name')}</th><th>${t('th_id')}</th><th>${t('th_left')}</th>${isPremium() ? `<th>${t('th_resident')}</th>` : ''}</tr></thead><tbody>
         ${ev.slice().sort((a, b) => b.ts - a.ts).slice(0, 30).map(e => `<tr>
-          <td>${new Date(e.ts).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
-          <td>${e.type === 'delivery' ? 'Delivery' : 'Visitor'}</td><td>${esc(whereOf(e))}</td>
-          ${e.anon ? '<td class="gone" colspan="2">Erased after ' + s.retention + ' days</td>' : (e.nameEn || e.idn) ? `<td>${esc(e.nameEn)}${e.nameAr ? ' / <span dir="rtl">' + esc(e.nameAr) + '</span>' : ''}</td><td>${esc(maskId(e.idn))}${e.phone ? '<br><span class="small">' + esc(e.phone) + '</span>' : ''}</td>` : `<td colspan="2">${e.carColor || e.plate ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(e.plate) : '') : '–'}</td>`}
+          <td>${esc(num(new Date(e.ts).toLocaleString(isAr() ? 'ar-AE-u-nu-arab' : [], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })))}</td>
+          <td>${esc(typeLabel(e.type))}</td><td>${esc(whereOf(e))}</td>
+          ${e.anon ? `<td class="gone" colspan="2">${esc(t('erased_after', { n: num(s.retention) }))}</td>` : (e.nameEn || e.idn) ? `<td>${esc(e.nameEn)}${e.nameAr ? ' / <span dir="rtl">' + esc(e.nameAr) + '</span>' : ''}</td><td>${esc(num(maskId(e.idn)))}${e.phone ? '<br><span class="small">' + esc(e.phone) + '</span>' : ''}</td>` : `<td colspan="2">${e.carColor || e.plate ? '🚗 ' + esc(e.carColor) + (e.plate ? ' · ' + esc(num(e.plate)) : '') : '–'}</td>`}
           <td>${leftCell(e)}</td>${isPremium() ? `<td>${approvalLabel(e)}</td>` : ''}
-        </tr>`).join('')}</tbody></table></div>` : '<p class="empty">No entries recorded yet at this gate.</p>'}
+        </tr>`).join('')}</tbody></table></div>` : `<p class="empty">${t('no_entries_yet')}</p>`}
     </div>
 
-    <div class="panel"><h3>Settings</h3>
+    <div class="panel"><h3>${t('settings_title')}</h3>
       <div class="settings">
-        <div class="field"><label>Plan</label><div style="display:flex;gap:12px;align-items:center;min-height:48px"><span class="tag ${isPremium() ? 'delivery' : 'visitor'}">${isPremium() ? 'Premium' : 'Basic'}</span><button class="btn" data-act="plan" style="min-height:42px;padding:6px 16px">Change plan</button></div></div>
-        <div class="field"><label for="s1">Community / gate name</label><input id="s1" data-set="community" value="${esc(s.community)}"></div>
-        <div class="field"><label for="s2">Erase names, IDs and phone numbers after (days)</label><input id="s2" data-set="retention" type="number" min="1" max="365" value="${s.retention}"></div>
-        <div class="field"><label for="s3">Delivery companies (comma separated)</label><input id="s3" data-set="companies" value="${esc(s.companies.join(', '))}"></div>
-        <div class="field"><label for="s4">Villa sections / blocks (comma separated)</label><input id="s4" data-set="sections" value="${esc(s.sections.join(', '))}"></div>
-        <div class="field"><label for="s4b">Sub-communities (comma separated)</label><input id="s4b" data-set="clusters" value="${esc(s.clusters.join(', '))}"></div>
-        <div class="field"><label for="s5">Manager PIN (4 digits)</label><input id="s5" data-set="pin" inputmode="numeric" maxlength="4" value="${esc(s.pin)}"></div>
-        <div class="field"><label for="s7">Track when deliveries leave</label><select id="s7" data-set="trackDeliveryExit"><option value="off" ${!s.trackDeliveryExit ? 'selected' : ''}>Off — faster, deliveries won't show as "inside"</option><option value="on" ${s.trackDeliveryExit ? 'selected' : ''}>On — guard taps Out for deliveries too</option></select></div>
-        <div class="field"><label for="s8">Delivery time limit (minutes)</label><input id="s8" data-set="overstayMin" inputmode="numeric" value="${s.overstayMin}"></div>
-        ${isPremium() ? `<div class="field"><label for="s6">Ask the resident before visitors enter</label><select id="s6" data-set="approval"><option value="off" ${!s.approval ? 'selected' : ''}>Off</option><option value="on" ${s.approval ? 'selected' : ''}>On</option></select></div>
-        <div class="field"><label for="s9">Assume people left after (hours)</label><input id="s9" data-set="assumeLeftHours" inputmode="numeric" value="${s.assumeLeftHours}"></div>
-        <div class="field full"><label for="s10">Villa phone numbers (one per line: A-12, 0501234567)</label><textarea id="s10" data-set="directory">${esc(Object.entries(s.directory || {}).map(([k, v]) => k + ', ' + v).join('\n'))}</textarea>
-          <p class="small">These are residents' personal numbers. They stay until removed.</p></div>` : `<div class="field full"><p class="small"><b>Premium adds</b> returning drivers/visitors and resident approval.</p></div>`}
+        <div class="field"><label>${t('plan_label')}</label><div style="display:flex;gap:12px;align-items:center;min-height:48px"><span class="tag ${isPremium() ? 'delivery' : 'visitor'}">${isPremium() ? t('plan_premium') : t('plan_basic')}</span><button class="btn" data-act="plan" style="min-height:42px;padding:6px 16px">${t('change_plan')}</button></div></div>
+        <div class="field"><label for="s1">${t('community_label')}</label><input id="s1" data-set="community" value="${esc(s.community)}"></div>
+        <div class="field"><label for="s2">${t('retention_label')}</label><input id="s2" data-set="retention" type="number" min="1" max="365" value="${s.retention}"></div>
+        <div class="field"><label for="s3">${t('companies_label')}</label><input id="s3" data-set="companies" value="${esc(s.companies.join(', '))}"></div>
+        <div class="field"><label for="s4">${t('sections_label')}</label><input id="s4" data-set="sections" value="${esc(s.sections.join(', '))}"></div>
+        <div class="field"><label for="s4b">${t('clusters_label')}</label><input id="s4b" data-set="clusters" value="${esc(s.clusters.join(', '))}"></div>
+        <div class="field"><label for="s5">${t('pin_setting_label')}</label><input id="s5" data-set="pin" inputmode="numeric" maxlength="4" value="${esc(s.pin)}"></div>
+        <div class="field"><label for="s7">${t('track_exit_label')}</label><select id="s7" data-set="trackDeliveryExit"><option value="off" ${!s.trackDeliveryExit ? 'selected' : ''}>${t('track_exit_off')}</option><option value="on" ${s.trackDeliveryExit ? 'selected' : ''}>${t('track_exit_on')}</option></select></div>
+        <div class="field"><label for="s8">${t('overstay_label')}</label><input id="s8" data-set="overstayMin" inputmode="numeric" value="${s.overstayMin}"></div>
+        ${isPremium() ? `<div class="field"><label for="s6">${t('approval_setting_label')}</label><select id="s6" data-set="approval"><option value="off" ${!s.approval ? 'selected' : ''}>${t('off_label')}</option><option value="on" ${s.approval ? 'selected' : ''}>${t('on_label')}</option></select></div>
+        <div class="field"><label for="s9">${t('assume_left_label')}</label><input id="s9" data-set="assumeLeftHours" inputmode="numeric" value="${s.assumeLeftHours}"></div>
+        <div class="field full"><label for="s10">${t('directory_label')}</label><textarea id="s10" data-set="directory">${esc(Object.entries(s.directory || {}).map(([k, v]) => k + ', ' + v).join('\n'))}</textarea>
+          <p class="small">${t('directory_note')}</p></div>` : `<div class="field full"><p class="small">${t('premium_note')}</p></div>`}
       </div>
       <div class="actions">
-        <button class="btn" data-act="csv">Export CSV</button>
-        <button class="btn" data-act="purge">Erase old details now</button>
+        <button class="btn" data-act="csv">${t('export_csv')}</button>
+        <button class="btn" data-act="purge">${t('erase_now')}</button>
       </div>
     </div>
   </div></div>`;
 }
 function hourChart(ev) {
-  const d = Array(24).fill(0), v = Array(24).fill(0);
-  ev.forEach(e => (e.type === 'delivery' ? d : v)[new Date(e.ts).getHours()]++);
-  const max = Math.max(1, ...d.map((x, i) => x + v[i])), H = 150;
+  const d = Array(24).fill(0), v = Array(24).fill(0), sv = Array(24).fill(0);
+  ev.forEach(e => (e.type === 'delivery' ? d : e.type === 'service' ? sv : v)[new Date(e.ts).getHours()]++);
+  const max = Math.max(1, ...d.map((x, i) => x + v[i] + sv[i])), H = 150;
   let bars = '', lab = '';
   for (let h = 0; h < 24; h++) {
-    const x = h * 30 + 4, dh = d[h] / max * H, vh = v[h] / max * H;
-    bars += `<rect x="${x}" y="${H - vh}" width="22" height="${vh}" rx="3" fill="var(--teal)"/><rect x="${x}" y="${H - vh - dh}" width="22" height="${dh}" rx="3" fill="var(--gold)"/>`;
-    if (h % 3 === 0) lab += `<text x="${x + 11}" y="${H + 20}" text-anchor="middle">${hlab(h)}</text>`;
+    const x = h * 30 + 4, dh = d[h] / max * H, vh = v[h] / max * H, svh = sv[h] / max * H;
+    bars += `<rect x="${x}" y="${H - vh}" width="22" height="${vh}" rx="3" fill="var(--teal)"/><rect x="${x}" y="${H - vh - svh}" width="22" height="${svh}" rx="3" fill="var(--teal-l)"/><rect x="${x}" y="${H - vh - svh - dh}" width="22" height="${dh}" rx="3" fill="var(--gold)"/>`;
+    if (h % 3 === 0) lab += `<text x="${x + 11}" y="${H + 20}" text-anchor="middle">${esc(num(hlab(h)))}</text>`;
   }
   return `<svg class="chart" viewBox="0 0 720 ${H + 28}" width="100%" role="img">${bars}${lab}</svg>`;
 }
 function exportCsv() {
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
   const rows = [['time', 'type', 'company', 'section', 'villa', 'name_en', 'name_ar', 'id_number', 'phone', 'car_color', 'plate_number', 'left_at', 'resident_reply']]
-    .concat(db.events.filter(e => !e.demo).sort((a, b) => a.ts - b.ts).map(e => [new Date(e.ts).toISOString(), e.type, e.company, e.section, e.villa, e.nameEn, e.nameAr, e.idn, e.anon ? '' : (e.phone || ''), e.carColor || '', e.plate || '', e.outAt ? new Date(e.outAt).toISOString() : '', e.approval]));
+    .concat(db.events.slice().sort((a, b) => a.ts - b.ts).map(e => [new Date(e.ts).toISOString(), e.type, e.company, e.section, e.villa, e.nameEn, e.nameAr, e.idn, e.anon ? '' : (e.phone || ''), e.carColor || '', e.plate || '', e.outAt ? new Date(e.outAt).toISOString() : '', e.approval]));
   const blob = new Blob(['﻿' + rows.map(r => r.map(q).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gatesone-entries.csv';
   document.body.appendChild(a); a.click(); a.remove();
