@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatesone — the gate logbook your guards won't fight</title>
+<meta name="description" content="Gatesone replaces the paper logbook at your community gate. One tablet for deliveries, visitors and service calls, in English or Arabic, synced live to your office.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&family=Noto+Sans+Arabic:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff; --black:#1d2420; --gold:#d9b46c; --gold-l:#ecd4a0; --teal:#2e5e51; --teal-l:#5f9484;
+  --paper:#f6f3ec; --card:#ffffff; --ink:#1d2420; --muted:#667069; --line:#e3ded2;
+  --r-sm:10px; --r-md:16px; --r-lg:22px;
+  --sh:0 10px 30px -12px rgba(29,36,32,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141a17; --card:#1e2723; --ink:#f1eee6; --muted:#a3ada6; --line:#2e3a35;
+    --gold:#e3bf7c; --gold-l:#f0d8a8; --teal:#3b7f6b; --teal-l:#6fb39b;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141a17; --card:#1e2723; --ink:#f1eee6; --muted:#a3ada6; --line:#2e3a35;
+  --gold:#e3bf7c; --gold-l:#f0d8a8; --teal:#3b7f6b; --teal-l:#6fb39b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font:500 17px/1.55 "Manrope",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{font-family:"Fraunces",serif; margin:0; letter-spacing:-.01em}
+a{color:inherit}
+button, input{font:inherit}
+button:focus-visible, input:focus-visible, a:focus-visible{outline:3px solid var(--teal); outline-offset:2px; border-radius:6px}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important} }
+
+.wrap{max-width:1120px; margin:0 auto; padding:0 28px}
+
+/* ---------- header ---------- */
+header{padding:26px 0 0}
+.topbar{display:flex; align-items:center; justify-content:space-between; gap:16px}
+.brand{display:flex; align-items:baseline; gap:9px}
+.brand .mark{font-family:"Fraunces",serif; font-weight:700; font-size:22px; letter-spacing:-.01em}
+.brand .mark em{font-style:normal; color:var(--teal)}
+.langtoggle{display:flex; border:1.5px solid var(--line); border-radius:99px; overflow:hidden}
+.langtoggle button{border:0; background:none; padding:8px 16px; font-weight:700; font-size:14px; color:var(--muted); cursor:pointer}
+.langtoggle button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 76px; display:grid; grid-template-columns:1.1fr 1fr; gap:56px; align-items:center}
+.hero h1{font-size:clamp(34px,4.6vw,54px); line-height:1.08; font-weight:600; max-width:15ch}
+.hero .lede{margin:22px 0 0; max-width:42ch; color:var(--muted); font-size:18px; line-height:1.6}
+.leadform{margin-top:30px; max-width:420px}
+.leadform .row{display:flex; gap:10px}
+.leadform input[type=email]{flex:1; height:54px; padding:0 16px; border-radius:var(--r-sm); border:1.5px solid var(--line); background:var(--card); color:var(--ink); font-weight:700; font-size:16px}
+.leadform input[type=email]::placeholder{color:var(--muted); font-weight:600}
+.leadform button{height:54px; padding:0 22px; border-radius:var(--r-sm); border:0; background:var(--teal); color:var(--white); font-weight:800; font-size:15px; cursor:pointer; white-space:nowrap}
+.leadform button:hover{background:#24493f}
+.leadform .fine{margin:10px 2px 0; font-size:13px; color:var(--muted)}
+.leadform .ok{margin:12px 2px 0; font-size:14px; font-weight:700; color:var(--teal); display:none}
+
+/* ---------- hero mock: recreation of the actual guard tile screen ---------- */
+.kiosk{background:var(--card); border:1.5px solid var(--line); border-radius:var(--r-lg); padding:22px; box-shadow:var(--sh); max-width:360px; margin:0 auto}
+.kiosk .kh{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:16px}
+.kiosk .kh .gate{font-size:13px; font-weight:700; color:var(--muted)}
+.kiosk .kh .clock{font-family:"Fraunces",serif; font-weight:600; font-size:15px}
+.kiosk h2{font-size:22px; font-weight:600; margin-bottom:14px}
+.tiles{display:grid; gap:10px}
+.tile{border-radius:var(--r-md); padding:18px 16px; display:flex; flex-direction:column; gap:2px; position:relative; overflow:hidden}
+.tile .tt{font-family:"Fraunces",serif; font-size:21px; font-weight:600}
+.tile .ts{font-size:12.5px; font-weight:600; opacity:.85}
+.tile.delivery{background:var(--gold); color:var(--black)}
+.tile.visitor{background:var(--teal); color:var(--white)}
+.tile.service{background:var(--paper); color:var(--ink); border:2px solid var(--teal)}
+.kiosk .klog{margin-top:14px; border-top:1px dashed var(--line); padding-top:12px; display:flex; flex-direction:column; gap:8px}
+.klog .row{display:flex; justify-content:space-between; align-items:center; font-size:13px}
+.klog .row .w{font-weight:700}
+.klog .row .m{color:var(--muted)}
+.klog .tag{font-size:10.5px; font-weight:800; padding:2px 8px; border-radius:99px}
+.tag.delivery{background:var(--gold-l); color:#5c4215}
+.tag.visitor{background:var(--teal-l); color:#0f2a22}
+.tag.service{background:var(--line); color:var(--ink)}
+[dir="rtl"] .kiosk, [dir="rtl"] body{font-family:"Noto Sans Arabic","Manrope",system-ui,sans-serif}
+[dir="rtl"] .tt, [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] .clock{font-family:"Noto Sans Arabic","Fraunces",serif}
+
+/* ---------- how it works ---------- */
+.section{padding:64px 0}
+.section h2.lbl{font-size:13px; font-weight:800; color:var(--teal); margin-bottom:10px}
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:34px; counter-reset:step}
+.step{border-top:3px solid var(--line); padding-top:18px; position:relative}
+.step .n{font-family:"Fraunces",serif; font-size:34px; font-weight:600; color:var(--teal-l); display:block; margin-bottom:8px}
+.step h3{font-size:19px; font-weight:600; margin-bottom:8px}
+.step p{margin:0; color:var(--muted); font-size:15.5px; line-height:1.55}
+
+/* ---------- ledger: what it tracks ---------- */
+.ledger{border-top:1px solid var(--line); margin-top:34px}
+.lrow{display:flex; gap:22px; padding:17px 0; border-bottom:1px solid var(--line); align-items:baseline}
+.lrow .lk{flex:0 0 220px; font-family:"Fraunces",serif; font-size:17px; font-weight:600}
+.lrow .lv{color:var(--muted); font-size:15px; max-width:52ch}
+
+/* ---------- pricing ---------- */
+.pricecard{background:var(--card); border:1.5px solid var(--line); border-radius:var(--r-lg); padding:36px 38px; margin-top:30px; max-width:640px; box-shadow:var(--sh)}
+.pricecard .amt{display:flex; align-items:baseline; gap:10px}
+.pricecard .amt b{font-family:"Fraunces",serif; font-size:46px; font-weight:600}
+.pricecard .amt span{color:var(--muted); font-size:15px; font-weight:700}
+.pricecard .what{margin:14px 0 0; font-size:16px; color:var(--ink)}
+.pricecard .extra{margin:8px 0 0; font-size:15px; color:var(--muted)}
+.pricecard hr{border:0; border-top:1px dashed var(--line); margin:22px 0}
+.pricecard .perk{display:flex; gap:10px; font-size:15px; margin:8px 0; color:var(--ink)}
+.pricecard .perk b{color:var(--teal)}
+
+/* ---------- cta band ---------- */
+.ctaband{background:var(--ink); color:var(--paper); border-radius:var(--r-lg); padding:48px 44px; margin:10px 0 64px; display:grid; grid-template-columns:1.2fr 1fr; gap:32px; align-items:center}
+.ctaband h2{color:var(--paper); font-size:clamp(26px,3.4vw,34px); font-weight:600; max-width:18ch}
+.ctaband .lede{color:#cfd3cd; margin-top:10px; font-size:15.5px; max-width:40ch}
+.ctaband .leadform input[type=email]{background:#243029; border-color:#3a473f; color:var(--paper)}
+.ctaband .leadform input[type=email]::placeholder{color:#9aa39c}
+.ctaband .leadform button{background:var(--gold); color:#3a2a0d}
+.ctaband .leadform button:hover{background:var(--gold-l)}
+.ctaband .leadform .fine{color:#9aa39c}
+.ctaband .leadform .ok{color:var(--gold-l)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line); padding:26px 0 40px; display:flex; justify-content:space-between; gap:16px; font-size:14px; color:var(--muted); flex-wrap:wrap}
+footer a{text-decoration:underline}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr; gap:40px; padding:40px 0 48px}
+  .steps{grid-template-columns:1fr; gap:26px}
+  .ctaband{grid-template-columns:1fr; padding:34px 26px}
+  .lrow{flex-direction:column; gap:4px}
+  .lrow .lk{flex:none}
+  .leadform .row{flex-direction:column}
+  .leadform button{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="topbar">
+    <div class="brand"><span class="mark">gates<em>one</em></span></div>
+    <div class="langtoggle" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" data-lang="ar" aria-pressed="false">AR</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <h1 data-t="h1">The gate logbook your guards won't fight.</h1>
+      <p class="lede" data-t="lede">One tablet at the gate captures every delivery, visitor and service call — name, ID, plate, photo — in English or Arabic, synced live to your office.</p>
+      <form class="leadform" id="leadform-1">
+        <div class="row">
+          <input type="email" required placeholder="Work email" aria-label="Work email" data-ph-en="Work email" data-ph-ar="البريد الإلكتروني للعمل">
+          <button type="submit" data-t="cta">Get early access</button>
+        </div>
+        <p class="fine" data-t="fine">We'll email you back — no spam, no setup call required to ask.</p>
+        <p class="ok" role="status">Thanks — opening your email app to send the request.</p>
+      </form>
+    </div>
+
+    <div class="kiosk" aria-hidden="true">
+      <div class="kh">
+        <span class="gate" data-t="kiosk_gate">Main Gate</span>
+        <span class="clock">9:41</span>
+      </div>
+      <h2 data-t="kiosk_h">What's coming through?</h2>
+      <div class="tiles">
+        <div class="tile delivery">
+          <span class="tt" data-t="tile_delivery">Delivery</span>
+          <span class="ts" data-t="tile_delivery_s">Package, courier, food</span>
+        </div>
+        <div class="tile visitor">
+          <span class="tt" data-t="tile_visitor">Visitor</span>
+          <span class="ts" data-t="tile_visitor_s">Guest or family</span>
+        </div>
+        <div class="tile service">
+          <span class="tt" data-t="tile_service">Service</span>
+          <span class="ts" data-t="tile_service_s">Maintenance, cleaning</span>
+        </div>
+      </div>
+      <div class="klog">
+        <div class="row"><span class="w">Villa 12 · Al Reem</span><span class="tag delivery" data-t="tag_delivery">Delivery</span></div>
+        <div class="row"><span class="w">Villa 7 · Al Reem</span><span class="tag visitor" data-t="tag_visitor">Visitor</span></div>
+        <div class="row"><span class="w">Villa 23 · Al Reem</span><span class="tag service" data-t="tag_service">Service</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="how">
+    <h2 class="lbl" data-t="how_lbl">How it works</h2>
+    <h2 style="font-size:clamp(24px,3vw,32px); font-weight:600; max-width:20ch" data-t="how_h">From the gate to your office, in three steps.</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="n">1</span>
+        <h3 data-t="step1_h">Guard taps the gate</h3>
+        <p data-t="step1_p">Delivery, visitor or service — a few fields, a photo if needed, done in under a minute. No handwriting, no paper book.</p>
+      </div>
+      <div class="step">
+        <span class="n">2</span>
+        <h3 data-t="step2_h">Entry logs instantly</h3>
+        <p data-t="step2_p">Timestamp, villa, plate and ID are saved the moment the guard confirms — nothing waits for someone to type it up later.</p>
+      </div>
+      <div class="step">
+        <span class="n">3</span>
+        <h3 data-t="step3_h">You watch it live</h3>
+        <p data-t="step3_p">Open the manager dashboard from any device and see who's in, who's out, and what came through today — no walking the logbook over.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="what">
+    <h2 class="lbl" data-t="what_lbl">What it tracks</h2>
+    <h2 style="font-size:clamp(24px,3vw,32px); font-weight:600; max-width:22ch" data-t="what_h">Everything your current logbook misses.</h2>
+    <div class="ledger">
+      <div class="lrow"><span class="lk" data-t="lk1">Deliveries</span><span class="lv" data-t="lv1">Courier, food, packages — tagged by villa and section, not just scrawled in a margin.</span></div>
+      <div class="lrow"><span class="lk" data-t="lk2">Visitors</span><span class="lv" data-t="lv2">Name, ID number and who they're visiting, recorded the same way every time.</span></div>
+      <div class="lrow"><span class="lk" data-t="lk3">Service calls</span><span class="lv" data-t="lv3">Maintenance, cleaning and contractor visits get their own category — not lumped in with guests.</span></div>
+      <div class="lrow"><span class="lk" data-t="lk4">Vehicles</span><span class="lv" data-t="lv4">Plate number and car colour captured at the gate, searchable later.</span></div>
+      <div class="lrow"><span class="lk" data-t="lk5">Entry &amp; exit</span><span class="lv" data-t="lv5">Know who's still inside the community right now, not just who came in this morning.</span></div>
+      <div class="lrow"><span class="lk" data-t="lk6">English &amp; Arabic</span><span class="lv" data-t="lv6">Guards work in whichever language they're comfortable in — the same entry, either language.</span></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="pricing">
+    <h2 class="lbl" data-t="price_lbl">Pricing</h2>
+    <h2 style="font-size:clamp(24px,3vw,32px); font-weight:600" data-t="price_h">One plan, no surprises.</h2>
+    <div class="pricecard">
+      <div class="amt"><b>100 AED</b><span data-t="price_per">/ month, per gate</span></div>
+      <p class="what" data-t="price_inc">Includes 2,000 entries a month.</p>
+      <p class="extra" data-t="price_extra">Go over that, and it's 1 AED for every 10 extra entries — no plan change, no call needed.</p>
+      <hr>
+      <div class="perk"><b>✓</b><span data-t="perk1">One tablet per gate, set up by us</span></div>
+      <div class="perk"><b>✓</b><span data-t="perk2">Live manager dashboard, included</span></div>
+      <div class="perk"><b>✓</b><span data-t="perk3">Bilingual guard screen, included</span></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="ctaband">
+      <div>
+        <h2 data-t="band_h">Ready to put this at your gate?</h2>
+        <p class="lede" data-t="band_p">Tell us a bit about your community and we'll get back to you by email.</p>
+      </div>
+      <form class="leadform" id="leadform-2">
+        <div class="row">
+          <input type="email" required placeholder="Work email" aria-label="Work email" data-ph-en="Work email" data-ph-ar="البريد الإلكتروني للعمل">
+          <button type="submit" data-t="cta2">Request access</button>
+        </div>
+        <p class="fine" data-t="fine2">We reply from gateone.ae@gmail.com.</p>
+        <p class="ok" role="status">Thanks — opening your email app to send the request.</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <span data-t="foot_copy">© 2026 Gatesone</span>
+  <a href="mailto:gateone.ae@gmail.com" data-t="foot_contact">gateone.ae@gmail.com</a>
+</footer>
+
+<script>
+const STR = {
+  h1: { en:"The gate logbook your guards won't fight.", ar:"سجل البوابة الذي لن يتجنبه الحراس." },
+  lede: { en:"One tablet at the gate captures every delivery, visitor and service call — name, ID, plate, photo — in English or Arabic, synced live to your office.", ar:"جهاز لوحي واحد عند البوابة يسجّل كل توصيل وزائر وطلب خدمة — الاسم، الهوية، رقم اللوحة، الصورة — بالعربية أو الإنجليزية، ويُزامَن مباشرة مع مكتبك." },
+  cta: { en:"Get early access", ar:"احصل على وصول مبكر" },
+  fine: { en:"We'll email you back — no spam, no setup call required to ask.", ar:"سنرد عليك بالبريد الإلكتروني — بدون رسائل غير مرغوبة وبدون الحاجة لمكالمة إعداد." },
+  kiosk_gate: { en:"Main Gate", ar:"البوابة الرئيسية" },
+  kiosk_h: { en:"What's coming through?", ar:"ما الذي سيدخل؟" },
+  tile_delivery: { en:"Delivery", ar:"توصيل" },
+  tile_delivery_s: { en:"Package, courier, food", ar:"طرود، مندوب، طعام" },
+  tile_visitor: { en:"Visitor", ar:"زائر" },
+  tile_visitor_s: { en:"Guest or family", ar:"ضيف أو عائلة" },
+  tile_service: { en:"Service", ar:"خدمة" },
+  tile_service_s: { en:"Maintenance, cleaning", ar:"صيانة، تنظيف" },
+  tag_delivery: { en:"Delivery", ar:"توصيل" },
+  tag_visitor: { en:"Visitor", ar:"زائر" },
+  tag_service: { en:"Service", ar:"خدمة" },
+  how_lbl: { en:"How it works", ar:"كيف يعمل" },
+  how_h: { en:"From the gate to your office, in three steps.", ar:"من البوابة إلى مكتبك، في ثلاث خطوات." },
+  step1_h: { en:"Guard taps the gate", ar:"الحارس يسجّل عند البوابة" },
+  step1_p: { en:"Delivery, visitor or service — a few fields, a photo if needed, done in under a minute. No handwriting, no paper book.", ar:"توصيل، زائر أو خدمة — بضع حقول، وصورة إذا لزم الأمر، في أقل من دقيقة. بدون كتابة يدوية وبدون دفتر ورقي." },
+  step2_h: { en:"Entry logs instantly", ar:"يُسجَّل الدخول فوراً" },
+  step2_p: { en:"Timestamp, villa, plate and ID are saved the moment the guard confirms — nothing waits for someone to type it up later.", ar:"يتم حفظ الوقت والفيلا ورقم اللوحة والهوية لحظة تأكيد الحارس — لا شيء ينتظر إعادة الكتابة لاحقاً." },
+  step3_h: { en:"You watch it live", ar:"تشاهد كل ذلك مباشرة" },
+  step3_p: { en:"Open the manager dashboard from any device and see who's in, who's out, and what came through today — no walking the logbook over.", ar:"افتح لوحة المدير من أي جهاز وشاهد من بالداخل ومن خرج وماذا دخل اليوم — دون الحاجة لحمل السجل الورقي." },
+  what_lbl: { en:"What it tracks", ar:"ما الذي يسجّله" },
+  what_h: { en:"Everything your current logbook misses.", ar:"كل ما يفوته سجلّك الحالي." },
+  lk1: { en:"Deliveries", ar:"التوصيل" },
+  lv1: { en:"Courier, food, packages — tagged by villa and section, not just scrawled in a margin.", ar:"مندوب، طعام، طرود — مصنّفة حسب الفيلا والقطاع، وليس مجرد كتابة في الهامش." },
+  lk2: { en:"Visitors", ar:"الزوار" },
+  lv2: { en:"Name, ID number and who they're visiting, recorded the same way every time.", ar:"الاسم ورقم الهوية والشخص الذي يزورونه، تُسجَّل بالطريقة نفسها كل مرة." },
+  lk3: { en:"Service calls", ar:"طلبات الخدمة" },
+  lv3: { en:"Maintenance, cleaning and contractor visits get their own category — not lumped in with guests.", ar:"الصيانة والتنظيف وزيارات المتعهدين لها فئتها الخاصة — وليست مدمجة مع الضيوف." },
+  lk4: { en:"Vehicles", ar:"المركبات" },
+  lv4: { en:"Plate number and car colour captured at the gate, searchable later.", ar:"رقم اللوحة ولون السيارة يُسجَّلان عند البوابة، ويمكن البحث عنهما لاحقاً." },
+  lk5: { en:"Entry & exit", ar:"الدخول والخروج" },
+  lv5: { en:"Know who's still inside the community right now, not just who came in this morning.", ar:"تعرف من لا يزال داخل المجتمع الآن، وليس فقط من دخل هذا الصباح." },
+  lk6: { en:"English & Arabic", ar:"الإنجليزية والعربية" },
+  lv6: { en:"Guards work in whichever language they're comfortable in — the same entry, either language.", ar:"يعمل الحراس باللغة التي يفضّلونها — نفس السجل، بأي من اللغتين." },
+  price_lbl: { en:"Pricing", ar:"الأسعار" },
+  price_h: { en:"One plan, no surprises.", ar:"خطة واحدة، بدون مفاجآت." },
+  price_per: { en:"/ month, per gate", ar:"/ شهرياً، لكل بوابة" },
+  price_inc: { en:"Includes 2,000 entries a month.", ar:"يشمل 2000 سجل شهرياً." },
+  price_extra: { en:"Go over that, and it's 1 AED for every 10 extra entries — no plan change, no call needed.", ar:"في حال التجاوز، درهم واحد لكل 10 سجلات إضافية — بدون تغيير خطة وبدون مكالمة." },
+  perk1: { en:"One tablet per gate, set up by us", ar:"جهاز لوحي واحد لكل بوابة، نقوم بإعداده" },
+  perk2: { en:"Live manager dashboard, included", ar:"لوحة مدير مباشرة، ضمن الخطة" },
+  perk3: { en:"Bilingual guard screen, included", ar:"شاشة حارس ثنائية اللغة، ضمن الخطة" },
+  band_h: { en:"Ready to put this at your gate?", ar:"جاهز لوضعه عند بوابتك؟" },
+  band_p: { en:"Tell us a bit about your community and we'll get back to you by email.", ar:"أخبرنا قليلاً عن مجتمعك وسنرد عليك بالبريد الإلكتروني." },
+  cta2: { en:"Request access", ar:"طلب الوصول" },
+  fine2: { en:"We reply from gateone.ae@gmail.com.", ar:"نرد من gateone.ae@gmail.com." },
+  foot_copy: { en:"© 2026 Gatesone", ar:"© 2026 جيتس ون" },
+  foot_contact: { en:"gateone.ae@gmail.com", ar:"gateone.ae@gmail.com" },
+};
+
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    if (STR[key]) el.textContent = STR[key][lang];
+  });
+  document.querySelectorAll('input[data-ph-en]').forEach(el => {
+    el.placeholder = lang === 'ar' ? el.getAttribute('data-ph-ar') : el.getAttribute('data-ph-en');
+  });
+  document.querySelectorAll('.langtoggle button').forEach(b => {
+    b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false');
+  });
+  try { localStorage.setItem('gatesone_landing_lang', lang); } catch (e) {}
+}
+
+document.querySelectorAll('.langtoggle button').forEach(b => {
+  b.addEventListener('click', () => setLang(b.getAttribute('data-lang')));
+});
+
+let initial = 'en';
+try { initial = localStorage.getItem('gatesone_landing_lang') || 'en'; } catch (e) {}
+setLang(initial);
+
+document.querySelectorAll('.leadform').forEach(form => {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = form.querySelector('input[type=email]').value.trim();
+    const subject = encodeURIComponent('Gatesone — early access request');
+    const body = encodeURIComponent(`Hi Gatesone,\n\nI'd like to get early access.\n\nMy email: ${email}\n\n(Tell us a bit about your community and how many gates you need.)`);
+    window.location.href = `mailto:gateone.ae@gmail.com?subject=${subject}&body=${body}`;
+    const ok = form.querySelector('.ok');
+    if (ok) ok.style.display = 'block';
+  });
+});
+</script>
+</body>
+</html>
