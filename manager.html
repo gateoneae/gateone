@@ -1259,6 +1259,19 @@ function exportCsv() {
   document.body.appendChild(a); a.click(); a.remove();
 }
 
+// Kiosk guard: this tablet should never navigate away via the device/browser back
+// button (e.g. back to whatever page was open before this one, such as the guard
+// app). Trap back navigation by keeping a dummy history entry on top of the stack
+// and re-pushing it whenever the user tries to go back.
+(function () {
+  try {
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', function () {
+      history.pushState(null, '', location.href);
+    });
+  } catch (e) {}
+})();
+
 boot();
 </script>
 </body>
